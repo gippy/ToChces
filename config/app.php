@@ -145,7 +145,7 @@ return [
 		'ToChces\Providers\EventServiceProvider',
 		'ToChces\Providers\RouteServiceProvider',
 
-		'Laravel\Socialite\SocialiteServiceProvider',
+		'SocialiteProviders\Manager\ServiceProvider',
 
 		'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider',
 

@@ -4,8 +4,15 @@ use ToChces\Http\Controllers\Controller;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\Registrar;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use ToChces\Repositories\SocialRepository;
+use Session;
+use Auth;
+use Socialize;
 
 class AuthController extends Controller {
+
+	/** @var SocialRepository $socialRepo social repository */
+	protected $socialRepo = null;
 
 	/*
 	|--------------------------------------------------------------------------
@@ -23,40 +30,39 @@ class AuthController extends Controller {
 	/**
 	 * Create a new authentication controller instance.
 	 *
+	 * @param  SocialRepository $socialRepository
 	 * @param  \Illuminate\Contracts\Auth\Guard  $auth
 	 * @param  \Illuminate\Contracts\Auth\Registrar  $registrar
-	 * @return void
 	 */
-	public function __construct(Guard $auth, Registrar $registrar)
+	public function __construct(SocialRepository $socialRepository, Guard $auth, Registrar $registrar)
 	{
+		$this->socialRepo = $socialRepository;
 		$this->auth = $auth;
 		$this->registrar = $registrar;
-
-		$this->middleware('guest', ['except' => 'getLogout']);
 	}
 
-	public function redirectToFacebook()
-	{
-	    return Socialize::with('facebook')->redirect();
+	public function getLogout(){
+		$this->middleware('auth');
+		Auth::logout();
+		Session::flush();
+		return redirect('/');
 	}
 
-	public function handleFacebookCallback()
+	public function redirectTo($provider)
 	{
-	    $user = Socialize::with('facebook')->user();
-
-	    // $user->token;
+		$this->middleware('guest');
+	    return Socialize::with($provider)->redirect();
 	}
 
-	public function redirectToGoogle()
+	public function handleSocialCallback($provider)
 	{
-	    return Socialize::with('google')->redirect();
-	}
+		$this->middleware('guest');
+	    $userData = Socialize::with($provider)->user();
+		$social = $this->socialRepo->createOrUpdate($provider, $userData);
+	    $user = $social->user;
+		$this->auth->login($user, true);
 
-	public function handleGoogleCallback()
-	{
-	    $user = Socialize::with('google')->user();
-
-	    // $user->token;
+		return redirect('/');
 	}
 
 }

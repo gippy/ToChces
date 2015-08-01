@@ -1,0 +1,88 @@
+@import "variables.less";
+
+.form-checkbox {
+  padding: 5px;
+}
+input[type="checkbox"] {
+  display:none;
+}
+input[type="checkbox"] + label {
+  line-height: 27px;
+  vertical-align:middle;
+  font-size: 27px;
+  color: @accent_color;
+}
+input[type="checkbox"] + label span {
+  display:inline-block;
+  width:23px;
+  height:23px;
+  margin:-3px 4px 0 0;
+  vertical-align:middle;
+  border: 2px solid @accent_color;
+  cursor:pointer;
+}
+input[type="checkbox"]:checked + label span {
+  background:url("/images/x.png") 0px 0px no-repeat;
+}
+
+input[type="text"], textarea {
+  box-sizing: border-box;
+  border: 1px solid @accent_color;
+  background: white;
+  padding: @baseline*0.2 @baseline*0.5;
+  font-size: @baseline*0.6;
+  line-height: @baseline*0.7;
+  margin:0;
+  color: black;
+  display: block;
+  width: 100%;
+
+  &.half {
+	width: 50%;
+  }
+}
+
+input[type="text"] {
+  height: @baseline*2.2;
+}
+textarea {
+  height: @baseline*5.8;
+}
+
+.input-group {
+  &:after {
+	content:"";
+	display:table;
+	clear:both;
+  }
+  input, button {
+	box-sizing: border-box;
+	float: left;
+	display: inline;
+  }
+  input {
+	width: 75%;
+  }
+  button {
+	width: 25%;
+  }
+
+  &.big {
+	input {
+	  padding: @baseline*0.5 @baseline;
+	  font-size: @baseline;
+	  line-height: @baseline*1.2;
+	}
+	button {
+	  padding: @baseline*0.5 @baseline;
+	  font-size: @baseline;
+	  line-height: @baseline*1.2;
+	}
+  }
+}
+
+label {
+  display: block;
+  color: @accent_color;
+}
+

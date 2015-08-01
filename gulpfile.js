@@ -11,6 +11,9 @@ var elixir = require('laravel-elixir');
  |
  */
 
+elixir.config.sourcemaps = false;
 elixir(function(mix) {
     mix.less('app.less');
+	mix.coffee(['app.coffee', 'directives.coffee', 'crop/*.coffee', 'controllers.coffee'], 'resources/assets/js', { bare: true });
+	mix.scripts();
 });

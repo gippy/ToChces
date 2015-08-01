@@ -1,6 +1,6 @@
 <?php namespace ToChces\Services;
 
-use ToChces\User;
+use ToChces\Models\User;
 use Validator;
 use Illuminate\Contracts\Auth\Registrar as RegistrarContract;
 

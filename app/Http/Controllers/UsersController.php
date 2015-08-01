@@ -1,6 +1,9 @@
 <?php namespace ToChces\Http\Controllers;
 
 use ToChces\Repositories\UserRepository;
+use ToChces\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Response;
 
 class UsersController extends Controller {
 
@@ -9,10 +12,9 @@ class UsersController extends Controller {
 
 	/**
 	 * Create a new controller instance.
-	 *
-	 * @return void
+	 * @param UserRepository $userRepository
 	 */
-	public function __construct(UserRepository $userRepository)
+	public function __construct(UserRepository $userRepository){
 		$this->userRepository = $userRepository;
 	}
 
@@ -21,18 +23,30 @@ class UsersController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function list()
-	{
+	public function all() {
 		return Response::json(array(
-			"users" => $this->userRepository->all();
+			"users" => $this->userRepository->all()
 		));
 	}
 
-	public function single(Product $user)
+	public function single(User $user)
 	{
 		return view('users/user', array(
 			'user' => $user
 		));
+	}
+
+	public function current() {
+		$user = Auth::user();
+		$products = $this->userRepository->getProducts($user->id);
+		return view('users/current', array(
+			'user' => $user,
+			'products' => $products
+		));
+	}
+
+	public function settings(){
+
 	}
 
 }

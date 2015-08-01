@@ -1,0 +1,37 @@
+@import "variables.less";
+
+button, .btn {
+  border: none;
+  background: @btn-color;
+  padding: @baseline*0.5 @baseline;
+  font-size: @baseline;
+  line-height: @baseline*1.2;
+  color: white;
+  &:active {
+	background: @btn-color-active;
+  }
+}
+
+a.btn, a.btn:hover, a.btn:active, a.btn:visited{
+  color: white;
+}
+
+.btn.facebook {
+  background-color: @color-facebook;
+  &:hover {
+	background-color: lighten(@color-facebook, 5%);
+  }
+  &:active {
+	background-color: darken(@color-facebook, 10%);
+  }
+}
+
+.btn.google {
+  background-color: @color-google;
+  &:hover {
+	background-color: lighten(@color-google, 5%);
+  }
+  &:active {
+	background-color: darken(@color-google, 10%);
+  }
+}

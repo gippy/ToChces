@@ -1,5 +1,7 @@
 <?php namespace ToChces\Http\Controllers;
 
+use Response;
+
 class WelcomeController extends Controller {
 
 	/*
@@ -15,11 +17,8 @@ class WelcomeController extends Controller {
 
 	/**
 	 * Create a new controller instance.
-	 *
-	 * @return void
 	 */
-	public function __construct()
-	{
+	public function __construct() {
 		$this->middleware('guest');
 	}
 

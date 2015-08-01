@@ -1,6 +1,7 @@
 <?php namespace ToChces\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Auth;
 
 class Product extends Model {
 
@@ -11,6 +12,43 @@ class Product extends Model {
 	 */
 	protected $table = 'products';
 
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array
+	 */
+	protected $fillable = ['url', 'name', 'vendor', 'price', 'image', 'added_by', 'approved'];
+
+	/**
+	 * The accessors to append to the model's array form.
+	 *
+	 * @var array
+	 */
+	protected $appends = ['liked', 'owned'];
+
+	protected $like = false;
+
+
+	public function likes()
+	{
+		return $this->hasMany('ToChces\Models\Like');
+	}
+
+	public function like(){
+		if ($this->like === false && Auth::check()) {
+			$this->like = $this->likes()->where('user_id', Auth::user()->id)->first();
+		}
+		return $this->like;
+	}
+
+	public function getLikedAttribute(){
+		return $this->like() != null;
+	}
+
+	public function getOwnedAttribute(){
+		$like = $this->like();
+		return $like && $like->owned;
+	}
 	
 
 }

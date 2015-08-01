@@ -1,0 +1,82 @@
+@import "variables.less";
+
+.modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 100;
+  background: black;
+  background: rgba(0,0,0,0.6) url('/images/bg.png') left top repeat;
+
+  &.fade {
+	z-index: -1;
+	visibility: hidden;
+
+	.wrapper {
+	  top: -360px;
+	}
+  }
+
+  &.login {
+	.wrapper {
+	  width: 588px;
+	  text-align: center;
+	  padding-bottom: 0;
+	}
+  }
+
+  &.categories {
+	&.fade {
+	  top: -280px;
+	}
+	.wrapper {
+	  margin-top: 80px;
+	}
+  }
+}
+
+.modal .wrapper {
+  width: 320px;
+  padding: 55px;
+  height: auto;
+  min-height: 100px;
+  margin: 160px auto 0 auto;
+  background: white url('/images/bg.png') left top repeat;
+  position: relative;
+  top: 0;
+
+  -webkit-transition: top 0.4s ease-in-out;
+  -moz-transition: top 0.4s ease-in-out;
+  -o-transition: top 0.4s ease-in-out;
+  transition: top 0.4s ease-in-out;
+}
+
+.modal .close {
+  position: absolute;
+  display: block;
+  right: -13px;
+  top: -13px;
+  width: 23px;
+  height: 23px;
+  background: white url('/images/x-active.png') left top no-repeat;
+  border: 2px solid @accent_color;
+  cursor: pointer;
+}
+
+.modal .content {
+  position: relative;
+}
+
+.modal .logo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -105px;
+  width: 115px;
+  height: 100px;
+  margin: 0 auto;
+  background-color: white;
+
+}

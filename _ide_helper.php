@@ -1,7 +1,7 @@
 <?php
 /**
- * An helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.0.32 on 2015-06-05.
+ * A helper file for Laravel 5, to provide autocomplete information to your IDE
+ * Generated for Laravel 5.0.33 on 2015-06-28.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -1228,7 +1228,7 @@ namespace {
         /**
          * Get the currently authenticated user.
          *
-         * @return \ToChces\User|null 
+         * @return \ToChces\Models\User|null 
          * @static 
          */
         public static function user(){
@@ -1330,7 +1330,7 @@ namespace {
          *
          * @param mixed $id
          * @param bool $remember
-         * @return \ToChces\User 
+         * @return \ToChces\Models\User 
          * @static 
          */
         public static function loginUsingId($id, $remember = false){
@@ -1435,7 +1435,7 @@ namespace {
         /**
          * Return the currently cached user.
          *
-         * @return \ToChces\User|null 
+         * @return \ToChces\Models\User|null 
          * @static 
          */
         public static function getUser(){
@@ -1477,7 +1477,7 @@ namespace {
         /**
          * Get the last user we attempted to authenticate.
          *
-         * @return \ToChces\User 
+         * @return \ToChces\Models\User 
          * @static 
          */
         public static function getLastAttempted(){

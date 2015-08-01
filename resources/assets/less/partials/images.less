@@ -1,0 +1,28 @@
+img {
+  max-width: 100%;
+}
+
+img.profile-photo {
+  display: block;
+  width: 62px;
+  height: 62px;
+}
+
+img.product-image {
+  display: inline-block;
+  width: 280px;
+  height: 280px;
+  &.landscape {
+	width: 590px;
+  }
+  &.portrait {
+	height: 590px;
+  }
+  &.option {
+	width: auto;
+	cursor: pointer;
+  }
+  &.hidden {
+	display: none;
+  }
+}
