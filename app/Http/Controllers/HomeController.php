@@ -1,5 +1,9 @@
 <?php namespace ToChces\Http\Controllers;
 
+use Storage;
+use Response;
+use App;
+
 class HomeController extends Controller {
 
 	/*
@@ -13,13 +17,7 @@ class HomeController extends Controller {
 	|
 	*/
 
-	/**
-	 * Create a new controller instance.
-	 *
-	 * @return void
-	 */
-	public function __construct()
-	{
+	public function __construct() {
 		$this->middleware('auth');
 	}
 
@@ -33,11 +31,10 @@ class HomeController extends Controller {
 		return view('home');
 	}
 
-	public function products()
-	{
-		return Response::json(array(
-			"products" => $this->productRepository->pagedApproved( Input::get('page', 0) );
-		));
+	public function download($file) {
+		$disk = Storage::disk('local');
+		if ($disk->exists($file)) return response()->download(storage_path().'/app/'.$file);
+		else App::abort(404);
 	}
 
 }

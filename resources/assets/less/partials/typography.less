@@ -1,0 +1,175 @@
+@import "variables.less";
+
+/* Standard Text */
+body, input, button, textarea {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: @body_font_size;
+  line-height: @baseline;
+  color: @body_color;
+}
+
+/* Block Baselines */
+h1, h2, h3, h4, h5, h6,
+p, ul, ol, pre, blockquote,
+textarea, button {
+  margin-bottom: 0 0 @baseline 0;
+}
+
+
+/* Headers */
+h1,h2,h3,h4,h5,h6{
+  color: @header_color;
+  font-weight: @header_font_weight;
+  margin: 0;
+}
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  margin: 0;
+}
+
+h1, .h1 {
+  font-size: @header_max_size;
+  line-height: @baseline*2;
+}
+h2, .h2 {
+  font-size: @baseline*1.25;
+  line-height: @baseline*1.4;
+}
+h3, .h3 {
+  font-size: @baseline;
+  line-height: @baseline;
+  padding-bottom:@baseline*0.5;
+}
+h4, .h4 {
+  font-size: @baseline*0.8;
+  line-height: @baseline*1.2;
+}
+h5, .h5 {
+  font-size: @body_font_size;
+  font-weight: bold;
+  line-height: @baseline;
+}
+h6, .h6 {
+  font-size: @body_font_size;
+  text-decoration: underline;
+  line-height: @baseline;
+}
+
+
+
+/* Paragraph Elements */
+a:link {
+  color: @accent_color;
+  text-decoration: none;
+}
+a:visited {
+  color: gray;
+}
+a:hover {
+  text-decoration: underline;
+}
+a:active {
+  text-decoration: none;
+}
+
+sup, sub {
+  font-size: 80%;
+  line-height: 0;
+}
+sup {
+  vertical-align: super;
+}
+sub {
+  vertical-align: sub;
+}
+code {
+  font-family: Consolas, "Courier New", Courier, mono, monospace;
+}
+strong {
+  font-weight: normal;
+  color: @header_color;
+}
+
+/* Block Elements */
+ul , ol{
+  margin-left: @baseline/2;
+  padding-left: @baseline;
+}
+blockquote {
+  display: block;
+  padding: 0 @baseline/2;
+  font-style: italic;
+  margin-left: @baseline/2;
+}
+blockquote p:last-child {
+  margin-bottom: @baseline/2;
+}
+pre {
+  font-family: Consolas, "Courier New", Courier, mono, monospace;
+  font-size: @body_font_size - 2;
+  padding: @baseline/2 @baseline;
+}
+
+
+
+/* Forms */
+form {
+}
+form p {
+  margin: 0;
+}
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+label {
+  display: block;
+  margin-bottom: 0;
+}
+.checkbox input, .checkbox label {
+  display: inline;
+}
+.checkbox input {
+  vertical-align: baseline;
+}
+input, textarea, select {
+  display: block;
+  margin: 4px 0 @baseline+4 0;
+}
+input[type=text], input[type=email], input[type=url], textarea {
+  height: @baseline*1.5;
+  line-height: @baseline*1.5;
+  font-size: @body_font_size+2;
+  padding: 0;
+}
+textarea {
+  font-size: @body_font_size+2;
+  line-height: @baseline;
+}
+fieldset.radio {
+  margin-bottom: @baseline;
+}
+fieldset.radio fieldset {
+  margin: 0 0 0 @baseline;
+}
+fieldset.radio fieldset label input {
+  display: inline;
+  line-height: @baseline;
+  margin: 0;
+  vertical-align: baseline;
+}
+label.error {
+  width: @baseline*20;
+  text-align: right;
+  color: #aa0000;
+}
+label.error:before {
+  content: "▲ ";
+}
+input.error, textarea.error {
+  border-color: #aa0000;
+}
+
+.accent {
+  color: @accent_color;
+}

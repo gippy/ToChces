@@ -30,6 +30,11 @@ class AppServiceProvider extends ServiceProvider {
 			'ToChces\Repositories\LikeRepository',
 			'ToChces\Repositories\EloquentLikeRepository'
 		);
+
+		$this->app->bind(
+			'ToChces\Repositories\SocialRepository',
+			'ToChces\Repositories\EloquentSocialRepository'
+		);
 	}
 
 	/**

@@ -32,4 +32,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 */
 	protected $hidden = ['password', 'remember_token'];
 
+	/**
+	 * Get the social registrations for the user.
+	 */
+	public function socials()
+	{
+		return $this->hasMany('ToChces\Models\Social');
+	}
+
+	public function likes() {
+		$this->hasMany('ToChces\Models\Like');
+	}
+
 }
