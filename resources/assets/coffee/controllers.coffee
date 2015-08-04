@@ -73,7 +73,7 @@ app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $htt
 	$scope.getImage = (image) ->
 		$scope.product.selectedImage = image
 		$scope.product.croppedImage = ''
-		$http.get( '/products/getImage?url=' + image.src ).success (data) ->
+		$http.get( '/products/getImage?url=' + escape(image.src) ).success (data) ->
 			$scope.product.selectedImage.ourSrc = data.src
 			console.log $scope.product.selectedImage
 

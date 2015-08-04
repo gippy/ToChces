@@ -68,10 +68,13 @@ class EloquentProductRepository implements ProductRepository
 	public function create(array $input)
 	{
 		$product = Product::create($input);
-		$like = new Like();
-		$like->user_id = $input['added_by'];
-		$like->product_id = $product->id;
-		$like->save();
+		$product->save();
+
+		DB::table('likes')->insert([
+			'user_id' => $input['added_by'],
+			'product_id' => $product->id
+		]);
+
 		return $product;
 	}
 

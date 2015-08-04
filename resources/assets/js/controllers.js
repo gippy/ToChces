@@ -123,7 +123,7 @@ app.controller('AddProductController', [
     $scope.getImage = function(image) {
       $scope.product.selectedImage = image;
       $scope.product.croppedImage = '';
-      return $http.get('/products/getImage?url=' + image.src).success(function(data) {
+      return $http.get('/products/getImage?url=' + escape(image.src)).success(function(data) {
         $scope.product.selectedImage.ourSrc = data.src;
         return console.log($scope.product.selectedImage);
       });
