@@ -16,6 +16,9 @@ Blade::setEscapedContentTags('{!!', '!!}');   // for escaped data
 
 Route::get('/', 'WelcomeController@index');
 
+Route::get('/categories', 'HomeController@categories');
+Route::get('/categories/save', 'HomeController@saveCategories');
+
 Route::get('home', 'HomeController@index');
 
 Route::get('download/{file}', 'HomeController@download');

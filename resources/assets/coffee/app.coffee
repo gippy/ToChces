@@ -1,2 +1,2 @@
-app = angular.module 'ToChcete', []
+app = angular.module 'ToChcete', ['ngTagsInput']
 

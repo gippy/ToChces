@@ -5,14 +5,14 @@ use ToChces\Models\Like;
 class EloquentLikeRepository implements LikeRepository
 {
 
-	public function findByProduct(int $productId)
+	public function findByProduct($productId)
 	{
-		return Like::where('product', $productId)->orderBy('created_at', 'desc')->get();
+		return Like::with('user')->where('product_id', $productId)->orderBy('created_at', 'desc')->get();
 	}
 
-	public function findByUser(int $userId)
+	public function findByUser($userId)
 	{
-		return Like::where('user', $userId)->orderBy('created_at', 'desc')->get();
+		return Like::with('product')->where('user_id', $userId)->orderBy('created_at', 'desc')->get();
 	}
 
 	public function create(array $input)
@@ -33,17 +33,17 @@ class EloquentLikeRepository implements LikeRepository
 		return $like;
 	}
 
-	public function setOwned(int $productId, int $userId, $owned)
+	public function setOwned($productId, $userId, $owned)
 	{
-		$like = Like::where('product', $productId)->andWhere('user', $userId)->firstOrFail();
+		$like = Like::where('product_id', $productId)->where('user_id', $userId)->firstOrFail();
 		$like->owned = $owned;
 		$like->save();
 		return $like;
 	}
 
-	public function destroy(int $productId, int $userId)
+	public function destroy($productId, $userId)
 	{
-		$like = Like::where('product', $productId)->andWhere('user', $userId)->firstOrFail();
+		$like = Like::where('product_id', $productId)->where('user_id', $userId)->firstOrFail();
 		$like->delete();
 	}
 

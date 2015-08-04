@@ -5,9 +5,9 @@ use ToChces\Models\User;
 interface ProductRepository
 {
 
-	public function all($page = 0, $categories = '');
+	public function all($page = 0);
 
-	public function byUser(User $user, $page = 0, $categories = '');
+	public function byUser(User $user, $page = 0);
 
 	public function find(int $id);
 

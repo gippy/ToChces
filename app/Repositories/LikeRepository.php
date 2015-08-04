@@ -3,16 +3,16 @@
 interface LikeRepository
 {
 
-	public function findByProduct(int $productId);
+	public function findByProduct($productId);
 
-	public function findByUser(int $userId);
+	public function findByUser($userId);
 
 	public function create(array $input);
 
 	public function createOrUpdate(array $input);
 
-	public function setOwned(int $productId, int $userId, $owned);
+	public function setOwned($productId, $userId, $owned);
 
-	public function destroy(int $productId, int $userId);
+	public function destroy($productId, $userId);
 
 }

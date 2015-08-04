@@ -1,16 +1,58 @@
 app.controller('BodyController', [
-  '$scope', function($scope) {
+  '$scope', '$http', function($scope, $http) {
     $scope.navigationController = null;
     $scope.pageController = null;
     $scope.modalController = null;
+    $scope.categories = [];
     $scope.isModalVisible = function() {
       return $scope.modalController && $scope.modalController.isVisible();
     };
-    return $scope.showModal = function(type) {
+    $scope.showModal = function(type) {
       if ($scope.modalController) {
         return $scope.modalController.open(type);
       }
     };
+    $scope.hasActiveCategory = function() {
+      var category, i, len, ref;
+      if (!$scope.categories.length) {
+        return false;
+      }
+      ref = $scope.categories;
+      for (i = 0, len = ref.length; i < len; i++) {
+        category = ref[i];
+        if (category.is_active) {
+          return true;
+        }
+      }
+      return false;
+    };
+    $scope.deselectCategories = function() {
+      var category, i, len, ref, results;
+      if ($scope.hasActiveCategory) {
+        ref = $scope.categories;
+        results = [];
+        for (i = 0, len = ref.length; i < len; i++) {
+          category = ref[i];
+          results.push(category.is_active = false);
+        }
+        return results;
+      }
+    };
+    $scope.saveCategories = function() {
+      var categories, category, i, len, ref;
+      categories = [];
+      ref = $scope.categories;
+      for (i = 0, len = ref.length; i < len; i++) {
+        category = ref[i];
+        if (category.is_active) {
+          categories.push(category.id);
+        }
+      }
+      return window.location = '/categories/save?ids=' + categories.join(',');
+    };
+    return $http.get('/categories').success(function(categories) {
+      return $scope.categories = categories;
+    });
   }
 ]);
 
@@ -44,15 +86,14 @@ app.controller('PageController', [
 
 app.controller('ModalController', [
   '$scope', '$http', '$sce', function($scope, $http, $sce) {
-    var getModal, modals;
-    modals = {};
+    var getModal;
     $scope.visible = false;
     $scope.content = '';
     $scope.type = '';
+    $scope.url = '';
     getModal = function(type, cb) {
-      return $http.get('/modal/' + type).success(function(html) {
-        return cb($sce.trustAsHtml(html));
-      });
+      $scope.url = '/modal/' + type;
+      return cb();
     };
     $scope.isVisible = function() {
       return $scope.visible;
@@ -61,16 +102,10 @@ app.controller('ModalController', [
       return $scope.visible = false;
     };
     $scope.open = function(type) {
-      if (modals.hasOwnProperty(type)) {
-        $scope.content = modals[type];
+      return getModal(type, function() {
         $scope.type = type;
         return $scope.visible = true;
-      } else {
-        return getModal(type, function(content) {
-          modals[type] = content;
-          return $scope.open(type);
-        });
-      }
+      });
     };
     return $scope.$parent.modalController = $scope;
   }
@@ -81,7 +116,9 @@ app.controller('AddProductController', [
     $scope.url = '';
     $scope.product = {
       name: '',
-      images: ''
+      images: '',
+      tags: [],
+      categories: []
     };
     $scope.getImage = function(image) {
       $scope.product.selectedImage = image;
@@ -119,7 +156,9 @@ app.controller('ProductsController', [
     page = 0;
     dataUrl = '/products';
     $scope.getNextPage = function() {
-      return $http.get(dataUrl + (page ? '?page=' + page : '')).success(function(data) {
+      var query;
+      query = window.location.search.substring(1);
+      return $http.get(dataUrl + (page ? '?page=' + page : '?') + query).success(function(data) {
         return $scope.products = $scope.products.concat(data.products);
       });
     };
@@ -148,9 +187,19 @@ app.controller('ProductsController', [
         return product.liked = true;
       });
     };
+    $scope.iDontWantThis = function(product, $event) {
+      return $http.get('/product/' + product.id + '/dislike').success(function() {
+        return product.liked = product.owned = true;
+      });
+    };
     $scope.iHaveThis = function(product, $event) {
       return $http.get('/product/' + product.id + '/own').success(function() {
         return product.owned = product.liked = true;
+      });
+    };
+    $scope.iDontHaveThis = function(product, $event) {
+      return $http.get('/product/' + product.id + '/disown').success(function() {
+        return product.owned = false;
       });
     };
     return $scope.init();

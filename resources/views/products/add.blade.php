@@ -36,6 +36,9 @@
                 <label for="description">Popis produktu</label>
                 <textarea id="description" ng-model="product.description"></textarea>
             </div>
+            <div>
+                <tags-input ng-model="product.tags"></tags-input>
+            </div>
         </div>
         <div class="mrg-b-m center-text" ng-if="product.name && product.vendor && product.price">
             <button type="button" ng-click="submit()">Přidat</button>

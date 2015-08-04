@@ -1,10 +1,28 @@
-app.controller 'BodyController', ['$scope', ($scope)->
+app.controller 'BodyController', ['$scope', '$http', ($scope, $http)->
 	$scope.navigationController = null
 	$scope.pageController = null
 	$scope.modalController = null
 
+	$scope.categories = []
+
 	$scope.isModalVisible = () -> $scope.modalController and $scope.modalController.isVisible()
 	$scope.showModal = (type) -> if $scope.modalController then $scope.modalController.open(type)
+
+	$scope.hasActiveCategory = () ->
+		if !$scope.categories.length then return false
+		return true for category in $scope.categories when category.is_active
+		return false
+
+	$scope.deselectCategories = () ->
+		if $scope.hasActiveCategory
+			category.is_active = false for category in $scope.categories
+
+	$scope.saveCategories = () ->
+		categories = []
+		categories.push category.id for category in $scope.categories when category.is_active
+		window.location = '/categories/save?ids='+categories.join(',')
+
+	$http.get('/categories').success (categories) -> $scope.categories = categories
 ]
 
 app.controller 'NavigationController', ['$scope', ($scope) ->
@@ -24,25 +42,21 @@ app.controller 'PageController', ['$scope', '$http', ($scope, $http) ->
 ]
 
 app.controller 'ModalController', ['$scope', '$http', '$sce', ($scope, $http, $sce)->
-	modals = {}
-
 	$scope.visible = false
 	$scope.content = ''
 	$scope.type = ''
+	$scope.url = ''
 
-	getModal = (type, cb) -> $http.get( '/modal/' + type ).success (html) -> cb $sce.trustAsHtml(html)
+	getModal = (type, cb) ->
+		$scope.url = '/modal/' + type
+		cb()
 
 	$scope.isVisible = () -> return $scope.visible
 	$scope.close = () -> $scope.visible = false
 	$scope.open = (type) ->
-		if modals.hasOwnProperty(type)
-			$scope.content = modals[type]
+		getModal type, () ->
 			$scope.type = type
 			$scope.visible = true
-		else
-			getModal type, (content) ->
-				modals[type] = content
-				$scope.open(type)
 
 	$scope.$parent.modalController = $scope
 ]
@@ -52,6 +66,8 @@ app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $htt
 	$scope.product = {
 		name: ''
 		images: ''
+		tags: []
+		categories: []
 	}
 
 	$scope.getImage = (image) ->
@@ -84,7 +100,8 @@ app.controller 'ProductsController', ['$scope', '$http', '$sce', ($scope, $http)
 	dataUrl = '/products'
 
 	$scope.getNextPage = () ->
-		$http.get(dataUrl + (if page then '?page='+page else '' )).success (data) ->
+		query = window.location.search.substring(1)
+		$http.get(dataUrl + (if page then '?page='+page else '?' ) + query).success (data) ->
 			$scope.products = $scope.products.concat(data.products)
 
 	$scope.init = () ->
@@ -101,8 +118,12 @@ app.controller 'ProductsController', ['$scope', '$http', '$sce', ($scope, $http)
 
 	$scope.iWantThis = (product, $event) ->
 		$http.get('/product/'+product.id+'/like').success () -> product.liked = true
+	$scope.iDontWantThis = (product, $event) ->
+		$http.get('/product/'+product.id+'/dislike').success () -> product.liked = product.owned = true
 	$scope.iHaveThis = (product, $event) ->
 		$http.get('/product/'+product.id+'/own').success () -> product.owned = product.liked = true
+	$scope.iDontHaveThis = (product, $event) ->
+		$http.get('/product/'+product.id+'/disown').success () -> product.owned = false
 
 	$scope.init();
 

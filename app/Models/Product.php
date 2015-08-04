@@ -49,6 +49,10 @@ class Product extends Model {
 		$like = $this->like();
 		return $like && $like->owned;
 	}
+
+	public function tags(){
+		return $this->belongsToMany('ToChces\Models\Tag', 'tag_product');
+	}
 	
 
 }

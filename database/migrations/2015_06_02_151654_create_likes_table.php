@@ -14,12 +14,13 @@ class CreateLikesTable extends Migration {
 	{
 		Schema::create('likes', function(Blueprint $table)
 		{
-			$table->integer('user')->unsigned();
-			$table->foreign('user')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-			$table->integer('product')->unsigned();
-			$table->foreign('product')->references('id')->on('products')->onUpdate('cascade')->onDelete('cascade');
+			$table->integer('user_id')->unsigned();
+			$table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+			$table->integer('product_id')->unsigned();
+			$table->foreign('product_id')->references('id')->on('products')->onUpdate('cascade')->onDelete('cascade');
 			$table->boolean('owned')->default(false);
 			$table->timestamps();
+			$table->primary(['product_id', 'user_id']);
 		});
 	}
 

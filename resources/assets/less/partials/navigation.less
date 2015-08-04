@@ -65,8 +65,26 @@
   position: absolute;
   right: 0;
   top: 0;
-  width: 160px;
+  width: 200px;
   height: 100%;
+  input[type="text"] {
+	display: inline-block;
+	box-sizing: border-box;
+	width: 160px;
+	height: 20px;
+	font-size: 12px;
+	line-height: 12px;
+	padding: 3px 5px;
+	background:white;
+	border: 1px solid @accent_color;
+	color: @accent_color;
+	vertical-align: top;
+  }
+  img {
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+  }
 }
 
 body.has-modal .navigation {

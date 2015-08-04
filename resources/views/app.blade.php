@@ -15,6 +15,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular.min.js"></script>-->
     <script src="{! asset('/js/jquery.js') !}"></script>
     <script src="{! asset('/js/angular.js') !}"></script>
+    <script src="{! asset('/js/ng-tags-input.min.js') !}"></script>
     <script src="{! asset('/js/all.js') !}"></script>
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -36,10 +37,13 @@
                 @else
                     <li><a href="{! URL::route('profile') !}">Profil</a></li>
                 @endif
+                <li class="search">
+                    <form method="GET" action="/home">
+                        <input type="text" name="search" onchange="this.form.submit()" value="{! Input::get('search', '') !}" />
+                        <img src="{! URL::asset('/images/search-small.png') !}" alt="hledat" title="hledat"/>
+                    </form>
+                </li>
             </ul>
-            <div class="search">
-
-            </div>
         </div>
     </nav>
 
@@ -52,7 +56,7 @@
     <div class="modal" ng-controller="ModalController" ng-class="type + (isVisible() ? '' : ' fade')">
         <div class="wrapper">
             <span class="close" ng-click="close()">&nbsp;</span>
-            <div class="content" ng-bind-html="content">
+            <div class="content" ng-include ng-if="url" src="url">
             </div>
         </div>
     </div>
