@@ -72,8 +72,13 @@ class EloquentProductRepository implements ProductRepository
 
 		DB::table('likes')->insert([
 			'user_id' => $input['added_by'],
-			'product_id' => $product->id
+			'product_id' => $product->id,
+			'created_at' => new \DateTime(),
+			'updated_at' => new \DateTime()
 		]);
+
+		$tagRepository = new EloquentTagRepository();
+		$tagRepository->saveMultiple($product, $input['tags']);
 
 		return $product;
 	}

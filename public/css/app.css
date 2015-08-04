@@ -551,6 +551,11 @@ body.has-modal .page {
 }
 .form-checkbox {
   padding: 5px;
+  box-sizing: border-box;
+}
+.form-checkbox.half {
+  width: 50%;
+  float: left;
 }
 input[type="checkbox"] {
   display: none;
@@ -626,6 +631,8 @@ textarea {
 label {
   display: block;
   color: #35a8e0;
+  font-size: 27px;
+  line-height: 30px;
 }
 button,
 .btn {
@@ -663,6 +670,11 @@ a.btn:visited {
 }
 .btn.google:active {
   background-color: #be3f24;
+}
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
 }
 .mrg-t-l {
   margin-top: 60px;
@@ -936,15 +948,12 @@ tags-input .host:active {
   outline: 0;
 }
 tags-input .tags {
-  -moz-appearance: textfield;
-  -webkit-appearance: textfield;
   padding: 1px;
   overflow: hidden;
   word-wrap: break-word;
   cursor: text;
-  background-color: #fff;
-  border: 1px solid #a9a9a9;
-  box-shadow: 1px 1px 1px 0 #d3d3d3 inset;
+  background-color: white;
+  border: 1px solid #35a8e0;
   height: 100%;
 }
 tags-input .tags.focused {
@@ -961,20 +970,19 @@ tags-input .tags .tag-item {
   padding: 0 5px;
   display: inline-block;
   float: left;
-  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
   height: 26px;
   line-height: 25px;
-  border: 1px solid #acacac;
-  border-radius: 3px;
-  background: linear-gradient(to bottom, #f0f9ff 0, #cbebff 47%, #a1dbff 100%);
+  border: 1px solid #1e8ec4;
+  background: #bae1f4;
 }
 tags-input .tags .tag-item.selected {
-  background: linear-gradient(to bottom, #febbbb 0, #fe9090 45%, #ff5c5c 100%);
+  background: #e6f4fb;
 }
 tags-input .tags .tag-item .remove-button {
   margin: 0 0 0 5px;
   padding: 0;
-  border: none;
+  border: 1px solid #35a8e0;
   background: 0 0;
   cursor: pointer;
   vertical-align: middle;
@@ -992,7 +1000,7 @@ tags-input .tags .input {
   padding: 0 0 0 5px;
   float: left;
   height: 26px;
-  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
 }
 tags-input .tags .input::-ms-clear {
   display: none;
@@ -1009,7 +1017,6 @@ tags-input[disabled] .tags {
 }
 tags-input[disabled] .tags .tag-item {
   opacity: .65;
-  background: linear-gradient(to bottom, #f0f9ff 0, rgba(203, 235, 255, 0.75) 47%, rgba(161, 219, 255, 0.62) 100%);
 }
 tags-input[disabled] .tags .tag-item .remove-button {
   cursor: default;
@@ -1045,7 +1052,7 @@ tags-input .autocomplete .suggestion-item {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font: 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
   color: #000;
   background-color: #ffffff;
 }
@@ -1055,7 +1062,8 @@ tags-input .autocomplete .suggestion-item.selected em {
   background-color: #0097cf;
 }
 tags-input .autocomplete .suggestion-item em {
-  font: normal bold 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
   color: #000;
   background-color: #ffffff;
 }

@@ -337,18 +337,39 @@ app.controller('AddProductController', [
     };
     $scope.getProduct = function() {
       return $http.get('/products/getInfo?url=' + $scope.url).success(function(data) {
-        return $scope.product = data.product;
+        $scope.product = data.product;
+        $scope.product.tags = [];
+        return $scope.product.categories = [];
       });
     };
     return $scope.submit = function() {
-      var product;
+      var categories, category, i, j, k, len, len1, len2, product, ref, ref1, ref2, tag, value;
       product = {
         name: $scope.product.name,
         vendor: $scope.product.vendor,
         price: $scope.product.price,
         url: $scope.url,
-        image: $scope.product.croppedImage
+        image: $scope.product.croppedImage,
+        tags: []
       };
+      categories = {};
+      ref = $scope.$parent.categories;
+      for (i = 0, len = ref.length; i < len; i++) {
+        category = ref[i];
+        categories[category.id] = category;
+      }
+      ref1 = $scope.product.categories;
+      for (category = j = 0, len1 = ref1.length; j < len1; category = ++j) {
+        value = ref1[category];
+        if (value) {
+          product.tags.push(categories[category].name);
+        }
+      }
+      ref2 = $scope.product.tags;
+      for (k = 0, len2 = ref2.length; k < len2; k++) {
+        tag = ref2[k];
+        product.tags.push(tag.text);
+      }
       return $http.post('/add', product).success(function(data) {
         return window.location = data.path;
       });

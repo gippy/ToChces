@@ -20,15 +20,12 @@ tags-input .host:active {
 }
 
 tags-input .tags {
-  -moz-appearance: textfield;
-  -webkit-appearance: textfield;
   padding: 1px;
   overflow: hidden;
   word-wrap: break-word;
   cursor: text;
-  background-color: #fff;
-  border: 1px solid #a9a9a9;
-  box-shadow: 1px 1px 1px 0 #d3d3d3 inset;
+  background-color: white;
+  border: 1px solid @accent_color;
   height: 100%
 }
 
@@ -50,24 +47,21 @@ tags-input .tags .tag-item {
   padding: 0 5px;
   display: inline-block;
   float: left;
-  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
   height: 26px;
   line-height: 25px;
-  border: 1px solid #acacac;
-  border-radius: 3px;
-  background: -webkit-linear-gradient(top, #f0f9ff 0, #cbebff 47%, #a1dbff 100%);
-  background: linear-gradient(to bottom, #f0f9ff 0, #cbebff 47%, #a1dbff 100%)
+  border: 1px solid @accent_color_active;
+  background: @accent_color_bg;
 }
 
 tags-input .tags .tag-item.selected {
-  background: -webkit-linear-gradient(top, #febbbb 0, #fe9090 45%, #ff5c5c 100%);
-  background: linear-gradient(to bottom, #febbbb 0, #fe9090 45%, #ff5c5c 100%)
+  background: lighten(@accent_color_bg, 10%);
 }
 
 tags-input .tags .tag-item .remove-button {
   margin: 0 0 0 5px;
   padding: 0;
-  border: none;
+  border: 1px solid @accent_color;
   background: 0 0;
   cursor: pointer;
   vertical-align: middle;
@@ -86,7 +80,7 @@ tags-input .tags .input {
   padding: 0 0 0 5px;
   float: left;
   height: 26px;
-  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif
+  font-size: 14px;
 }
 
 tags-input .tags .input::-ms-clear {
@@ -110,8 +104,6 @@ tags-input[disabled] .tags {
 
 tags-input[disabled] .tags .tag-item {
   opacity: .65;
-  background: -webkit-linear-gradient(top, #f0f9ff 0, rgba(203, 235, 255, .75) 47%, rgba(161, 219, 255, .62) 100%);
-  background: linear-gradient(to bottom, #f0f9ff 0, rgba(203, 235, 255, .75) 47%, rgba(161, 219, 255, .62) 100%)
 }
 
 tags-input[disabled] .tags .tag-item .remove-button {
@@ -155,7 +147,7 @@ tags-input .autocomplete .suggestion-item {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font: 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
   color: #000;
   background-color: #fff
 }
@@ -166,7 +158,8 @@ tags-input .autocomplete .suggestion-item.selected, tags-input .autocomplete .su
 }
 
 tags-input .autocomplete .suggestion-item em {
-  font: normal bold 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
   color: #000;
   background-color: #fff
 }

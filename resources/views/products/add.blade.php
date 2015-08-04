@@ -24,19 +24,26 @@
                 <label for="name">Název produktu</label>
                 <input type="text" id="name" ng-model="product.name" required/>
             </div>
-            <div>
+            <div class="mrg-t-m">
                 <label for="vendor">Výrobce</label>
                 <input type="text" id="vendor" ng-model="product.vendor" required />
             </div>
-            <div>
+            <div class="mrg-t-m">
                 <label for="price">Cena</label>
                 <input type="text" id="price" class="half" ng-model="product.price" placeholder="Kč" required />
             </div>
-            <div>
+            <div class="mrg-t-m">
                 <label for="description">Popis produktu</label>
                 <textarea id="description" ng-model="product.description"></textarea>
             </div>
-            <div>
+            <div class="clearfix mrg-t-m">
+                <label>Zvolte kategorie</label>
+                <div ng-repeat="category in $parent.categories" class="form-checkbox half">
+                    <input type="checkbox" id="category_{{category.id}}" ng-model="product.categories[category.id]" />
+                    <label for="category_{{category.id}}"><span></span> {{category.name}}</label>
+                </div>
+            </div>
+            <div class="mrg-t-m clearfix">
                 <tags-input ng-model="product.tags"></tags-input>
             </div>
         </div>

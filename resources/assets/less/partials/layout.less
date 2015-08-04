@@ -1,5 +1,13 @@
 @import "variables.less";
 
+.clearfix {
+  &:after {
+	content:"";
+	display:table;
+	clear:both;
+  }
+}
+
 .mrg-t-l {
   margin-top: @baseline * 3;
 }

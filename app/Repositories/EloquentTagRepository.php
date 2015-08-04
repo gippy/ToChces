@@ -20,16 +20,15 @@ class EloquentTagRepository implements TagRepository
 		$diffArray = $query->lists('name');
 		$newTags = array_diff($tags, $diffArray);
 
+		$ids = [];
+		foreach ($productTags as $tag){
+			$ids[] = $tag->id;
+		}
 		foreach ($newTags as $name){
 			$tag = new Tag;
 			$tag->name = $name;
 			$tag->primary = false;
 			$tag->save();
-			$tags[] = $tag;
-		}
-
-		$ids = [];
-		foreach ($productTags as $tag){
 			$ids[] = $tag->id;
 		}
 		$product->tags()->sync($ids);

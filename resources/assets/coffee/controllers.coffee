@@ -80,6 +80,8 @@ app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $htt
 	$scope.getProduct = () ->
 		$http.get( '/products/getInfo?url=' + $scope.url  ).success (data) ->
 			$scope.product = data.product;
+			$scope.product.tags = [];
+			$scope.product.categories = [];
 
 	$scope.submit = () ->
 		product =
@@ -88,6 +90,15 @@ app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $htt
 			price: $scope.product.price
 			url: $scope.url
 			image: $scope.product.croppedImage
+			tags: []
+
+		categories = {}
+		categories[category.id] = category for category in $scope.$parent.categories
+
+		product.tags.push categories[category].name for value, category in $scope.product.categories when value
+
+		product.tags.push tag.text for tag in $scope.product.tags
+
 
 		$http.post('/add', product).success (data) -> window.location = data.path
 
