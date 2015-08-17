@@ -12,4 +12,14 @@ class ModalController extends Controller {
 		return view('modals/login');
 	}
 
+	public function loginWithEmail()
+	{
+		return view('modals/login-email');
+	}
+
+	public function register()
+	{
+		return view('modals/register');
+	}
+
 }

@@ -76,6 +76,15 @@ app.factory 'cropAreaSquare', [
 			ctx.rect centerCoords[0] - hSize, centerCoords[1] - hSize, size, size
 			return
 
+		CropAreaSquare::_drawImage = (ctx, image, centerCoords, size) ->
+			xRatio = image.width / ctx.canvas.width
+			yRatio = image.height / ctx.canvas.height
+
+			xLeft = centerCoords[0] - (size / 2)
+			yTop = centerCoords[1] - (size / 2)
+
+			ctx.drawImage image, xLeft * xRatio, yTop * yRatio, size * xRatio, size * yRatio, xLeft, yTop, size, size
+
 		CropAreaSquare::draw = ->
 			CropArea::draw.apply this, arguments
 			# draw move icon
@@ -92,6 +101,24 @@ app.factory 'cropAreaSquare', [
 				@_cropCanvas.drawIconResizeCircle resizeIconCenterCoords, @_resizeCtrlBaseRadius, if @_resizeCtrlIsHover == i then @_resizeCtrlHoverRatio else @_resizeCtrlNormalRatio
 				i++
 			return
+
+		CropAreaSquare::drawResultImage = (ctx, draw_ctx, canvas, image, resultSize) ->
+			xRatio = image.width / ctx.canvas.width
+			yRatio = image.height / ctx.canvas.height
+
+			cropX = (@getX() - (@getSize() / 2)) * xRatio
+			cropY = (@getY() - @getSize() / 2) * yRatio
+
+			cropWidth = @getSize() * xRatio
+			cropHeight = @getSize() * yRatio
+
+			resultWidth = resultSize
+			resultHeight = resultSize
+
+			canvas.width = resultWidth
+			canvas.height = resultHeight
+
+			draw_ctx.drawImage image, cropX, cropY, cropWidth , cropHeight , 0, 0, resultWidth, resultHeight
 
 		CropAreaSquare::processMouseMove = (mouseCurX, mouseCurY) ->
 			cursor = 'default'

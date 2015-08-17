@@ -97,11 +97,7 @@ app.factory 'cropCanvas', [ ->
 
 		### Crop Area ###
 
-		@drawCropArea = (image, centerCoords, size, fnDrawClipPath) ->
-			xRatio = image.width / ctx.canvas.width
-			yRatio = image.height / ctx.canvas.height
-			xLeft = centerCoords[0] - (size / 2)
-			yTop = centerCoords[1] - (size / 2)
+		@drawCropArea = (image, centerCoords, size, fnDrawClipPath, fnDrawImage) ->
 			ctx.save()
 			ctx.strokeStyle = colors.areaOutline
 			ctx.lineWidth = 2
@@ -111,7 +107,8 @@ app.factory 'cropCanvas', [ ->
 			ctx.clip()
 			# draw part of original image
 			if size > 0
-				ctx.drawImage image, xLeft * xRatio, yTop * yRatio, size * xRatio, size * yRatio, xLeft, yTop, size, size
+				fnDrawImage ctx, image, centerCoords, size
+
 			ctx.beginPath()
 			fnDrawClipPath ctx, centerCoords, size
 			ctx.stroke()

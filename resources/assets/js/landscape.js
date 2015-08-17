@@ -66,6 +66,28 @@ app.factory('cropAreaLandscape', [
       vSize = size / 2;
       ctx.rect(centerCoords[0] - hSize, centerCoords[1] - vSize, size * 2, size);
     };
+    CropAreaLandscape.prototype._drawImage = function(ctx, image, centerCoords, size) {
+      var xLeft, xRatio, yRatio, yTop;
+      xRatio = image.width / ctx.canvas.width;
+      yRatio = image.height / ctx.canvas.height;
+      xLeft = centerCoords[0] - size;
+      yTop = centerCoords[1] - (size / 2);
+      return ctx.drawImage(image, xLeft * xRatio, yTop * yRatio, size * xRatio * 2, size * yRatio, xLeft, yTop, size * 2, size);
+    };
+    CropAreaLandscape.prototype.drawResultImage = function(ctx, draw_ctx, canvas, image, resultSize) {
+      var cropHeight, cropWidth, cropX, cropY, resultHeight, resultWidth, xRatio, yRatio;
+      xRatio = image.width / ctx.canvas.width;
+      yRatio = image.height / ctx.canvas.height;
+      cropX = (this.getX() - this.getSize()) * xRatio;
+      cropY = (this.getY() - (this.getSize() / 2)) * yRatio;
+      cropWidth = this.getSize() * xRatio * 2;
+      cropHeight = this.getSize() * yRatio;
+      resultWidth = resultSize * 2;
+      resultHeight = resultSize;
+      canvas.width = resultWidth;
+      canvas.height = resultHeight;
+      return draw_ctx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, resultWidth, resultHeight);
+    };
     CropAreaLandscape.prototype.draw = function() {
       var i, len, resizeIconCenterCoords, resizeIconsCenterCoords;
       CropArea.prototype.draw.apply(this, arguments);
@@ -98,7 +120,7 @@ app.factory('cropAreaLandscape', [
         switch (this._resizeCtrlIsDragging) {
           case 0:
             xMulti = -1;
-            yMulti = -0.5;
+            yMulti = -1;
             cursor = 'nwse-resize';
             break;
           case 1:
@@ -198,6 +220,31 @@ app.factory('cropAreaLandscape', [
       this._resizeCtrlIsHover = -1;
       this._posDragStartX = 0;
       this._posDragStartY = 0;
+    };
+    CropAreaLandscape.prototype._dontDragOutside = function() {
+      var h, hSize, vSize, w;
+      h = this._ctx.canvas.height;
+      w = this._ctx.canvas.width;
+      hSize = this._size * 2;
+      vSize = this._size;
+      if (hSize > w) {
+        this._size = w / 2;
+      }
+      if (vSize > h) {
+        this._size = h;
+      }
+      if (this._x < this._size) {
+        this._x = this._size;
+      }
+      if (this._x > w - this._size) {
+        this._x = w - this._size;
+      }
+      if (this._y < this._size / 2) {
+        this._y = this._size / 2;
+      }
+      if (this._y > h - (this._size / 2)) {
+        this._y = h - (this._size / 2);
+      }
     };
     return CropAreaLandscape;
   }

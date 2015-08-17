@@ -150,10 +150,8 @@ app.factory('cropHost', [
         temp_canvas = void 0;
         temp_canvas = angular.element('<canvas></canvas>')[0];
         temp_ctx = temp_canvas.getContext('2d');
-        temp_canvas.width = resImgSize;
-        temp_canvas.height = resImgSize;
         if (image !== null) {
-          temp_ctx.drawImage(image, (theArea.getX() - (theArea.getSize() / 2)) * image.width / ctx.canvas.width, (theArea.getY() - (theArea.getSize() / 2)) * image.height / ctx.canvas.height, theArea.getSize() * image.width / ctx.canvas.width, theArea.getSize() * image.height / ctx.canvas.height, 0, 0, resImgSize, resImgSize);
+          theArea.drawResultImage(ctx, temp_ctx, temp_canvas, image, resImgSize);
         }
         if (resImgQuality !== null) {
           return temp_canvas.toDataURL(resImgFormat, resImgQuality);
@@ -292,13 +290,11 @@ app.factory('cropHost', [
         curX = theArea.getX();
         curY = theArea.getY();
         AreaClass = CropAreaSquare;
-
-        /*
-        				if type == 'portrait'
-        					AreaClass = CropAreaPortrait
-        				else if type == 'landscape'
-        					AreaClass = CropAreaLandscape
-         */
+        if (type === 'portrait') {
+          AreaClass = CropAreaPortrait;
+        } else if (type === 'landscape') {
+          AreaClass = CropAreaLandscape;
+        }
         theArea = new AreaClass(ctx, events);
         theArea.setMinSize(curMinSize);
         theArea.setSize(curSize);

@@ -81,8 +81,10 @@ app.factory 'cropArea', [
 			@_cropCanvas.drawCropArea @_image, [
 				@_x
 				@_y
-			], @_size, @_drawArea
+			], @_size, @_drawArea, @_drawImage
 			return
+
+		CropArea::drawResultImage = ->
 
 		CropArea::processMouseMove = ->
 

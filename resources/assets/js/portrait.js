@@ -9,7 +9,8 @@ app.factory('cropAreaPortrait', [
       this._iconMoveNormalRatio = 0.9;
       this._iconMoveHoverRatio = 1.2;
       this._resizeCtrlNormalRadius = this._resizeCtrlBaseRadius * this._resizeCtrlNormalRatio;
-      this._resizeCtrlHoverRadius = this._resizeCtrlBaseRadius * this._resizeCtrlHoverRatio;
+      this._resizeCtrlHoverVerticalRadius = this._resizeCtrlBaseRadius * this._resizeCtrlHoverRatio * 2;
+      this._resizeCtrlHoverHorizontalRadius = this._resizeCtrlBaseRadius * this._resizeCtrlHoverRatio;
       this._posDragStartX = 0;
       this._posDragStartY = 0;
       this._posResizeStartX = 0;
@@ -51,7 +52,7 @@ app.factory('cropAreaPortrait', [
       len = resizeIconsCenterCoords.length;
       while (i < len) {
         resizeIconCenterCoords = resizeIconsCenterCoords[i];
-        if (coord[0] > resizeIconCenterCoords[0] - this._resizeCtrlHoverRadius && coord[0] < resizeIconCenterCoords[0] + this._resizeCtrlHoverRadius && coord[1] > resizeIconCenterCoords[1] - this._resizeCtrlHoverRadius && coord[1] < resizeIconCenterCoords[1] + this._resizeCtrlHoverRadius) {
+        if (coord[0] > resizeIconCenterCoords[0] - this._resizeCtrlHoverHorizontalRadius && coord[0] < resizeIconCenterCoords[0] + this._resizeCtrlHoverHorizontalRadius && coord[1] > resizeIconCenterCoords[1] - this._resizeCtrlHoverVerticalRadius && coord[1] < resizeIconCenterCoords[1] + this._resizeCtrlHoverVerticalRadius) {
           res = i;
           break;
         }
@@ -65,11 +66,19 @@ app.factory('cropAreaPortrait', [
       vSize = size;
       ctx.rect(centerCoords[0] - hSize, centerCoords[1] - vSize, size, size * 2);
     };
+    CropAreaPortrait.prototype._drawImage = function(ctx, image, centerCoords, size) {
+      var xLeft, xRatio, yRatio, yTop;
+      xRatio = image.width / ctx.canvas.width;
+      yRatio = image.height / ctx.canvas.height;
+      xLeft = centerCoords[0] - (size / 2);
+      yTop = centerCoords[1] - size;
+      return ctx.drawImage(image, xLeft * xRatio, yTop * yRatio, size * xRatio, size * yRatio * 2, xLeft, yTop, size, size * 2);
+    };
     CropAreaPortrait.prototype.draw = function() {
       var i, len, resizeIconCenterCoords, resizeIconsCenterCoords;
       CropArea.prototype.draw.apply(this, arguments);
       this._cropCanvas.drawIconMove([this._x, this._y], this._areaIsHover ? this._iconMoveHoverRatio : this._iconMoveNormalRatio);
-      resizeIconsCenterCoords = this._calcSquareCorners();
+      resizeIconsCenterCoords = this._calcCorners();
       i = 0;
       len = resizeIconsCenterCoords.length;
       while (i < len) {
@@ -77,6 +86,20 @@ app.factory('cropAreaPortrait', [
         this._cropCanvas.drawIconResizeCircle(resizeIconCenterCoords, this._resizeCtrlBaseRadius, this._resizeCtrlIsHover === i ? this._resizeCtrlHoverRatio : this._resizeCtrlNormalRatio);
         i++;
       }
+    };
+    CropAreaPortrait.prototype.drawResultImage = function(ctx, draw_ctx, canvas, image, resultSize) {
+      var cropHeight, cropWidth, cropX, cropY, resultHeight, resultWidth, xRatio, yRatio;
+      xRatio = image.width / ctx.canvas.width;
+      yRatio = image.height / ctx.canvas.height;
+      cropX = (this.getX() - (this.getSize() / 2)) * xRatio;
+      cropY = (this.getY() - this.getSize()) * yRatio;
+      cropWidth = this.getSize() * xRatio;
+      cropHeight = this.getSize() * yRatio * 2;
+      resultWidth = resultSize;
+      resultHeight = resultSize * 2;
+      canvas.width = resultWidth;
+      canvas.height = resultHeight;
+      return draw_ctx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, resultWidth, resultHeight);
     };
     CropAreaPortrait.prototype.processMouseMove = function(mouseCurX, mouseCurY) {
       var cursor, hoveredResizeBox, iFR, iFX, iFY, posModifier, res, wasSize, xMulti, yMulti;
@@ -197,6 +220,31 @@ app.factory('cropAreaPortrait', [
       this._resizeCtrlIsHover = -1;
       this._posDragStartX = 0;
       this._posDragStartY = 0;
+    };
+    CropAreaPortrait.prototype._dontDragOutside = function() {
+      var h, hSize, vSize, w;
+      h = this._ctx.canvas.height;
+      w = this._ctx.canvas.width;
+      hSize = this._size;
+      vSize = this._size * 2;
+      if (hSize > w) {
+        this._size = w;
+      }
+      if (vSize > h) {
+        this._size = h / 2;
+      }
+      if (this._x < this._size / 2) {
+        this._x = this._size / 2;
+      }
+      if (this._x > w - this._size / 2) {
+        this._x = w - this._size / 2;
+      }
+      if (this._y < this._size) {
+        this._y = this._size;
+      }
+      if (this._y > h - this._size) {
+        this._y = h - this._size;
+      }
     };
     return CropAreaPortrait;
   }

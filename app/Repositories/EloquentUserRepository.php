@@ -48,7 +48,7 @@ class EloquentUserRepository implements UserRepository
 	}
 
 	/**
-	 * Find a user by it's email.
+	 * Find an user by it's email.
 	 *
 	 * @param  string $email
 	 * @return \ToChces\Models\User
@@ -56,6 +56,15 @@ class EloquentUserRepository implements UserRepository
 	public function findByEmail($email)
 	{
 		return User::whereEmail($email)->first();
+	}
+
+	/**
+	 * Find an user by his verification token.
+	 * @param $verification
+	 * @return mixed
+	 */
+	public function findByVerification($verification){
+		return User::where('verification', $verification)->first();
 	}
 
 

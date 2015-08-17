@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ModifyUsersTable extends Migration {
+class UsersVerifications extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -14,7 +14,8 @@ class ModifyUsersTable extends Migration {
 	{
 		Schema::table('users', function(Blueprint $table)
 		{
-			$table->string('image')->nullable();
+			$table->boolean('active')->default(0);
+			$table->string('verification')->nullable();
 		});
 	}
 
@@ -27,7 +28,8 @@ class ModifyUsersTable extends Migration {
 	{
 		Schema::table('users', function(Blueprint $table)
 		{
-			$table->dropColumn('image');
+			$table->dropColumn('active');
+			$table->dropColumn('verification');
 		});
 	}
 

@@ -15,8 +15,8 @@ return [
 	*/
 
 	'mailgun' => [
-		'domain' => '',
-		'secret' => '',
+		'domain' => env('MG_DOMAIN'),
+		'secret' => env('MG_KEY'),
 	],
 
 	'mandrill' => [

@@ -135,6 +135,7 @@ return [
 		'Illuminate\Translation\TranslationServiceProvider',
 		'Illuminate\Validation\ValidationServiceProvider',
 		'Illuminate\View\ViewServiceProvider',
+		'Illuminate\Broadcasting\BroadcastServiceProvider',
 
 		/*
 		 * Application Service Providers...
@@ -199,5 +200,7 @@ return [
 		'Socialize' => 'Laravel\Socialite\Facades\Socialite',
 
 	],
+
+	'imagesniff' => env('LOCAL_IMAGESNIFF'),
 
 ];

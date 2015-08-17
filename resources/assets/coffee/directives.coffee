@@ -5,20 +5,28 @@ app.directive 'productImageOption', () ->
 		link: (scope, elem, attr, model) ->
 
 			loadSize = () ->
-				w = elem.width()
-				h = elem.height()
+				img = new Image()
+				img.src = model.$viewValue.src
+				w = img.width
+				h = img.height
+
 				viewValue = model.$viewValue
 				viewValue.width = w
 				viewValue.height = h
-				if h < w then viewValue.type = 'landscape'
-				else if w < h then viewValue.type = 'portrait'
-				else viewValue.type = 'square'
 
-				ratio = h / 286
-				width = w * ratio
+				ratio = viewValue.ratio = if w > h then w/h else h/w
 
-				viewValue.class="product-image option"
-				if width < 286 then viewValue.class += ' ' + 'hidden'
+				if h < w and ratio > 1.5 and w >= 584 and h >= 286
+					viewValue.type = 'landscape'
+				else if w < h and ratio > 1.5 and w >= 286 and h >= 584
+					viewValue.type = 'portrait'
+				else
+					if w > h and ( w < 286 or (h * ratio) < 286 ) then viewValue.type = 'hidden'
+					else if h > w and ( h < 286 or (w * ratio) ) then viewValue.type = 'hidden'
+					else if w is h and w < 286 then viewValue.type = 'hidden'
+					else viewValue.type = 'square'
+
+				viewValue.class="product-image option " + viewValue.type
 
 				model.$setViewValue(viewValue);
 

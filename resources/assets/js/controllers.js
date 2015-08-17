@@ -91,6 +91,48 @@ app.controller('ModalController', [
     $scope.content = '';
     $scope.type = '';
     $scope.url = '';
+    $scope.login = {
+      email: '',
+      password: '',
+      submit: function() {
+        if (!$scope.login.password.$invalid && !$scope.login.email.$invalid) {
+          return $http.post('/auth/login', {
+            email: $scope.login.email,
+            password: $scope.login.password
+          }).success(function(data) {
+            return alert(data.success);
+          }).error(function(data) {
+            var error;
+            error = data && data.error ? data.error : 'Přihlášení se nepodařilo, zkuste to prosím znovu';
+            return alert(error);
+          });
+        }
+      }
+    };
+    $scope.register = {
+      email: '',
+      name: '',
+      password: '',
+      confirmation: '',
+      submit: function() {
+        var emailValid, nameValid, passwordValid;
+        emailValid = !$scope.register.email.$invalid;
+        nameValid = !$scope.register.name.$invalid;
+        passwordValid = !$scope.register.password.$invalid && $scope.register.password === $scope.register.confirmation;
+        if (emailValid && nameValid && passwordValid) {
+          return $http.post('/auth/register', {
+            name: $scope.register.name,
+            email: $scope.register.email,
+            password: $scope.register.password,
+            confirmation: $scope.register.confirmation
+          }).success(function(data) {
+            return alert(data.success);
+          }).error(function(data) {
+            return alert(data.error);
+          });
+        }
+      }
+    };
     getModal = function(type, cb) {
       $scope.url = '/modal/' + type;
       return cb();
@@ -102,6 +144,9 @@ app.controller('ModalController', [
       return $scope.visible = false;
     };
     $scope.open = function(type) {
+      if ($scope.visible) {
+        $scope.close();
+      }
       return getModal(type, function() {
         $scope.type = type;
         return $scope.visible = true;
@@ -120,17 +165,32 @@ app.controller('AddProductController', [
       tags: [],
       categories: []
     };
+    $scope.croppFinished = false;
+    $scope.finishCropping = function() {
+      return $scope.croppFinished = true;
+    };
+    $scope.sizeAndType = function(image) {
+      var modifier, ratio;
+      if (image.type === 'hidden') {
+        return 1000;
+      }
+      modifier = image.contentType === "image/png" ? 100 : 1;
+      ratio = image.ratio ? image.ratio : 1;
+      return ratio * modifier;
+    };
     $scope.getImage = function(image) {
       $scope.product.selectedImage = image;
       $scope.product.croppedImage = '';
-      return $http.get('/products/getImage?url=' + escape(image.src)).success(function(data) {
-        $scope.product.selectedImage.ourSrc = data.src;
-        return console.log($scope.product.selectedImage);
+      return $http.get('/products/getImage?url=' + encodeURIComponent(image.src)).success(function(data) {
+        return $scope.product.selectedImage.ourSrc = data.src;
       });
     };
     $scope.getProduct = function() {
-      return $http.get('/products/getInfo?url=' + $scope.url).success(function(data) {
-        $scope.product = data.product;
+      return $http.get('/products/getInfo?url=' + encodeURIComponent($scope.url)).success(function(data) {
+        $scope.product = {
+          name: data.title,
+          images: data.images
+        };
         $scope.product.tags = [];
         return $scope.product.categories = [];
       });
@@ -143,6 +203,7 @@ app.controller('AddProductController', [
         price: $scope.product.price,
         url: $scope.url,
         image: $scope.product.croppedImage,
+        layout: $scope.product.selectedImage.type,
         tags: []
       };
       categories = {};
@@ -201,6 +262,7 @@ app.controller('ProductsController', [
       if (product.owned) {
         classes.push('owned');
       }
+      classes.push(product.layout);
       return classes.join(' ');
     };
     $scope.iWantThis = function(product, $event) {

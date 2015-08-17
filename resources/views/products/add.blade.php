@@ -2,24 +2,36 @@
 
 @section('content')
     <div class="narrow pad-t-l" ng-controller="AddProductController">
-        <div class="url input-group big">
+        <div class="url input-group big" ng-show="!product.images">
             <input type="text" ng-model="url" placeholder="Zde vložte odkaz na produkt"/>
             <button ng-click="getProduct()">Přidat</button>
         </div>
-        <p></p>
-        <div class="horizontal-slider product-images" ng-if="product.images" ng-show="!product.selectedImage">
-            <div class="slide" ng-repeat="image in product.images" ng-class="image.class">
-                <img ng-model="image" ng-class="image.class" ng-src="{{image.src}}" ng-click="getImage(image)" product-image-option />
+
+        <div class="select-image" ng-if="product.images" ng-show="!product.selectedImage">
+            <label class="h2" style="text-align: center;">Vyberte fotku produktu</label>
+            <div class="product-images">
+                <div class="slide" ng-repeat="image in product.images | orderBy:sizeAndType" ng-class="image.class">
+                    <img ng-model="image" ng-class="image.class" ng-src="{{image.src}}" ng-click="getImage(image)" product-image-option />
+                </div>
             </div>
         </div>
-        <div class="selected-image" ng-if="product.selectedImage.ourSrc" style="text-align:center;">
+
+        <div class="selected-image" ng-if="product.selectedImage.src"  ng-show="!croppFinished" style="text-align:center;">
+            <label class="h2" style="text-align: center;">Ktera cast fotky se Vam nejvice líbí?</label>
             <div class="crop-area" ng-class="image.class">
                 <div class="crop" img-crop image="product.selectedImage.ourSrc" area-type="{{product.selectedImage.type}}" result-image="product.croppedImage" result-image-size="286">
                     &nbsp;
                 </div>
             </div>
+            <button ng-if="product.croppedImage" type="button" class="button" ng-click="finishCropping()">Potvrdit výběr</button>
         </div>
-        <div class="data mrg-t-l mrg-b-m" ng-if="product.croppedImage">
+
+        <div class="data mrg-b-m" ng-if="croppFinished">
+
+            <div ng-if="product.croppedImage" class="cropped-image mrg-t-s mrg-b-s">
+                <img ng-src="{{product.croppedImage}}" />
+            </div>
+
             <div>
                 <label for="name">Název produktu</label>
                 <input type="text" id="name" ng-model="product.name" required/>

@@ -15,6 +15,7 @@ Blade::setEscapedContentTags('{!!', '!!}');   // for escaped data
 */
 
 Route::get('/', 'WelcomeController@index');
+Route::get('/terms', "WelcomeController@terms");
 
 Route::get('/categories', 'HomeController@categories');
 Route::get('/categories/save', 'HomeController@saveCategories');
@@ -26,6 +27,10 @@ Route::get('download/{file}', 'HomeController@download');
 Route::get('/auth/logout', [
 	'as' => 'logout', 'uses' => 'Auth\AuthController@getLogout'
 ]);
+
+Route::post('/auth/login', 'Auth\AuthController@login');
+Route::post('/auth/register', 'Auth\AuthController@register');
+Route::get('/auth/verify', 'Auth\AuthController@verify');
 
 Route::get('/auth/{provider}', 'Auth\AuthController@redirectTo');
 Route::get('/auth/{provider}/callback', 'Auth\AuthController@handleSocialCallback');
@@ -65,4 +70,6 @@ Route::get('/add', [
 Route::post('/add', 'ProductsController@addSubmit');
 
 Route::get('/modal/login', 'ModalController@login');
+Route::get('/modal/register', 'ModalController@register');
 Route::get('/modal/categories', 'ModalController@categories');
+Route::get('/modal/login-email', 'ModalController@loginWithEmail');

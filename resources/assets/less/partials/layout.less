@@ -104,10 +104,29 @@
   display: inline-block;
   float: left;
   margin: 9px;
-  max-width: 280px;
-  max-height: 280px;
+  width: 286px;
+  height: 286px;
   overflow: hidden;
   position: relative;
+
+  &:after {
+	content:"";
+	display:table;
+	clear:both;
+  }
+
+  &.landscape {
+	width: 584px;
+	img {
+	  width: 584px;
+	}
+  }
+  &.portrait {
+	height: 584px;
+	img {
+	  height: 584px;
+	}
+  }
 
   &.liked {
 	.name {
@@ -159,22 +178,28 @@
 	bottom: 0;
   }
   .name {
-	font-size: 11px;
+	float: left;
+	font-size: 12px;
 	line-height: 1.31em;
 	font-weight: bold;
 	display: inline-block;
-	max-width: 70%;
 	color: black;
+	padding-right:50px;
   }
   .price {
-	font-size: 11px;
+	font-size: 12px;
 	line-height: 1.31em;
 	display: inline-block;
-	max-width: 70%;
+	clear: left;
+	float: left;
   }
   .to {
-	float: right;
-	height: 32px;
+	position: absolute;
+	max-width: 32px;
+	right: 0;
+	bottom: 6px;
+	height: auto;
+	width: 32px;
 	display: block;
 	margin: 9px;
 	cursor: pointer;
@@ -189,9 +214,11 @@
 	display:table;
 	clear:both;
   }
-  img {
+
+  & > img {
 	float: left;
   }
+
   .info {
 	box-sizing: border-box;
 	padding: @baseline;
@@ -202,8 +229,31 @@
 	background-color: rgb(255,255,255);
 	background-color: rgba(255,255,255,0.6);
 	position: relative;
-
   }
+
+  &.landscape {
+	& > img{
+	  display: block;
+	  float: none;
+	  margin: auto;
+	  width: 584px;
+	}
+	.info {
+	  width: 584px;
+	  float: none;
+	  margin: auto;
+	}
+  }
+
+  &.portrait {
+	& > img{
+	  height: 584px;
+	}
+	.info {
+	  height: 584px;
+	}
+  }
+
   p {
 	font-size: 20px;
 	margin-top: 0;

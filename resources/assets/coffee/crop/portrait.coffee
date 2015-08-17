@@ -10,7 +10,8 @@ app.factory 'cropAreaPortrait', [
 			@_iconMoveNormalRatio = 0.9
 			@_iconMoveHoverRatio = 1.2
 			@_resizeCtrlNormalRadius = @_resizeCtrlBaseRadius * @_resizeCtrlNormalRatio
-			@_resizeCtrlHoverRadius = @_resizeCtrlBaseRadius * @_resizeCtrlHoverRatio
+			@_resizeCtrlHoverVerticalRadius = @_resizeCtrlBaseRadius * @_resizeCtrlHoverRatio * 2
+			@_resizeCtrlHoverHorizontalRadius = @_resizeCtrlBaseRadius * @_resizeCtrlHoverRatio
 			@_posDragStartX = 0
 			@_posDragStartY = 0
 			@_posResizeStartX = 0
@@ -67,7 +68,7 @@ app.factory 'cropAreaPortrait', [
 			len = resizeIconsCenterCoords.length
 			while i < len
 				resizeIconCenterCoords = resizeIconsCenterCoords[i]
-				if coord[0] > resizeIconCenterCoords[0] - (@_resizeCtrlHoverRadius) and coord[0] < resizeIconCenterCoords[0] + @_resizeCtrlHoverRadius and coord[1] > resizeIconCenterCoords[1] - (@_resizeCtrlHoverRadius) and coord[1] < resizeIconCenterCoords[1] + @_resizeCtrlHoverRadius
+				if coord[0] > resizeIconCenterCoords[0] - (@_resizeCtrlHoverHorizontalRadius) and coord[0] < resizeIconCenterCoords[0] + (@_resizeCtrlHoverHorizontalRadius) and coord[1] > resizeIconCenterCoords[1] - (@_resizeCtrlHoverVerticalRadius) and coord[1] < resizeIconCenterCoords[1] + (@_resizeCtrlHoverVerticalRadius)
 					res = i
 					break
 				i++
@@ -79,6 +80,15 @@ app.factory 'cropAreaPortrait', [
 			ctx.rect centerCoords[0] - hSize, centerCoords[1] - vSize, size, size*2
 			return
 
+		CropAreaPortrait::_drawImage = (ctx, image, centerCoords, size) ->
+			xRatio = image.width / ctx.canvas.width
+			yRatio = image.height / ctx.canvas.height
+
+			xLeft = centerCoords[0] - (size / 2)
+			yTop = centerCoords[1] - (size)
+
+			ctx.drawImage image, xLeft * xRatio, yTop * yRatio, size * xRatio, size * yRatio * 2, xLeft, yTop, size, size * 2
+
 		CropAreaPortrait::draw = ->
 			CropArea::draw.apply this, arguments
 			# draw move icon
@@ -87,7 +97,7 @@ app.factory 'cropAreaPortrait', [
 				@_y
 			], if @_areaIsHover then @_iconMoveHoverRatio else @_iconMoveNormalRatio
 			# draw resize cubes
-			resizeIconsCenterCoords = @_calcSquareCorners()
+			resizeIconsCenterCoords = @_calcCorners()
 			i = 0
 			len = resizeIconsCenterCoords.length
 			while i < len
@@ -95,6 +105,24 @@ app.factory 'cropAreaPortrait', [
 				@_cropCanvas.drawIconResizeCircle resizeIconCenterCoords, @_resizeCtrlBaseRadius, if @_resizeCtrlIsHover == i then @_resizeCtrlHoverRatio else @_resizeCtrlNormalRatio
 				i++
 			return
+
+		CropAreaPortrait::drawResultImage = (ctx, draw_ctx, canvas, image, resultSize) ->
+			xRatio = image.width / ctx.canvas.width
+			yRatio = image.height / ctx.canvas.height
+
+			cropX = (@getX() - (@getSize() / 2)) * xRatio
+			cropY = (@getY() - @getSize()) * yRatio
+
+			cropWidth = @getSize() * xRatio
+			cropHeight = @getSize() * yRatio * 2
+
+			resultWidth = resultSize
+			resultHeight = resultSize * 2
+
+			canvas.width = resultWidth
+			canvas.height = resultHeight
+
+			draw_ctx.drawImage image, cropX, cropY, cropWidth , cropHeight , 0, 0, resultWidth, resultHeight
 
 		CropAreaPortrait::processMouseMove = (mouseCurX, mouseCurY) ->
 			cursor = 'default'
@@ -214,6 +242,33 @@ app.factory 'cropAreaPortrait', [
 			@_resizeCtrlIsHover = -1
 			@_posDragStartX = 0
 			@_posDragStartY = 0
+			return
+
+		CropAreaPortrait::_dontDragOutside = ->
+			h = @_ctx.canvas.height
+			w = @_ctx.canvas.width
+
+			hSize = @_size
+			vSize = @_size * 2
+
+			if hSize > w
+				@_size = w
+
+			if vSize > h
+				@_size = h / 2
+
+			if @_x < @_size / 2
+				@_x = @_size / 2
+
+			if @_x > w - @_size / 2
+				@_x = w - @_size / 2
+
+			if @_y < @_size
+				@_y = @_size
+
+			if @_y > h - @_size
+				@_y = h - @_size
+
 			return
 
 		CropAreaPortrait

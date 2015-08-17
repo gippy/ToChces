@@ -44,4 +44,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 		$this->hasMany('ToChces\Models\Like');
 	}
 
+	public function setPassword($password){
+		$this->password = bcrypt($password);
+	}
+
 }

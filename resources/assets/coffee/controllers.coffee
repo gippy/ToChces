@@ -47,6 +47,42 @@ app.controller 'ModalController', ['$scope', '$http', '$sce', ($scope, $http, $s
 	$scope.type = ''
 	$scope.url = ''
 
+	$scope.login =
+		email: ''
+		password: ''
+		submit: ()->
+			if !$scope.login.password.$invalid and !$scope.login.email.$invalid
+				$http.post('/auth/login', {
+					email: $scope.login.email,
+					password: $scope.login.password
+				}).success((data)->
+					alert(data.success)
+				).error((data) ->
+					error = if data and data.error then data.error else 'Přihlášení se nepodařilo, zkuste to prosím znovu'
+					alert error
+				)
+
+	$scope.register =
+		email: ''
+		name: ''
+		password: ''
+		confirmation: ''
+		submit: ()->
+			emailValid = !$scope.register.email.$invalid
+			nameValid = !$scope.register.name.$invalid
+			passwordValid = !$scope.register.password.$invalid and $scope.register.password is $scope.register.confirmation
+			if emailValid and nameValid and passwordValid
+				$http.post('/auth/register', {
+					name: $scope.register.name,
+					email: $scope.register.email,
+					password: $scope.register.password
+					confirmation: $scope.register.confirmation
+				}).success((data)->
+					alert(data.success)
+				).error((data) ->
+					alert(data.error)
+				)
+
 	getModal = (type, cb) ->
 		$scope.url = '/modal/' + type
 		cb()
@@ -54,6 +90,7 @@ app.controller 'ModalController', ['$scope', '$http', '$sce', ($scope, $http, $s
 	$scope.isVisible = () -> return $scope.visible
 	$scope.close = () -> $scope.visible = false
 	$scope.open = (type) ->
+		if $scope.visible then $scope.close()
 		getModal type, () ->
 			$scope.type = type
 			$scope.visible = true
@@ -69,19 +106,30 @@ app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $htt
 		tags: []
 		categories: []
 	}
+	$scope.croppFinished = false
+
+	$scope.finishCropping = () -> $scope.croppFinished = true
+
+	$scope.sizeAndType = (image) ->
+		if image.type == 'hidden' then return  1000
+		modifier = if image.contentType is "image/png" then 100 else 1
+		ratio = if image.ratio then image.ratio else 1
+		return ratio * modifier
 
 	$scope.getImage = (image) ->
 		$scope.product.selectedImage = image
 		$scope.product.croppedImage = ''
-		$http.get( '/products/getImage?url=' + escape(image.src) ).success (data) ->
+		$http.get( '/products/getImage?url=' + encodeURIComponent(image.src) ).success (data) ->
 			$scope.product.selectedImage.ourSrc = data.src
-			console.log $scope.product.selectedImage
 
 	$scope.getProduct = () ->
-		$http.get( '/products/getInfo?url=' + $scope.url  ).success (data) ->
-			$scope.product = data.product;
-			$scope.product.tags = [];
-			$scope.product.categories = [];
+		$http.get( '/products/getInfo?url=' + encodeURIComponent($scope.url)  ).success (data) ->
+			$scope.product = {
+				name: data.title,
+				images: data.images
+			}
+			$scope.product.tags = []
+			$scope.product.categories = []
 
 	$scope.submit = () ->
 		product =
@@ -90,6 +138,7 @@ app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $htt
 			price: $scope.product.price
 			url: $scope.url
 			image: $scope.product.croppedImage
+			layout: $scope.product.selectedImage.type
 			tags: []
 
 		categories = {}
@@ -125,6 +174,9 @@ app.controller 'ProductsController', ['$scope', '$http', '$sce', ($scope, $http)
 		classes = []
 		if product.liked then classes.push 'liked'
 		if product.owned then classes.push 'owned'
+
+		classes.push product.layout
+
 		return classes.join ' '
 
 	$scope.iWantThis = (product, $event) ->

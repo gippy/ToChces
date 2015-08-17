@@ -17,7 +17,7 @@ class Product extends Model {
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['url', 'name', 'vendor', 'price', 'image', 'added_by', 'approved'];
+	protected $fillable = ['url', 'name', 'vendor', 'price', 'image', 'added_by', 'approved', 'layout'];
 
 	/**
 	 * The accessors to append to the model's array form.

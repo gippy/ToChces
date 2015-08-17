@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="wide pad-t-l">
-    <div class="product {! $product->type !} clearfix">
+    <div class="product {! $product->layout !} clearfix">
         <img src="{! $product->image !}" alt="{! $product->name !}" />
         <div class="info clearfix">
             <p class="name">{! $product->name !} <br /> Od <span>{! $product->vendor !}</span></p>

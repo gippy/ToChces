@@ -79,8 +79,9 @@ app.factory('cropArea', [
     };
     CropArea.prototype._drawArea = function() {};
     CropArea.prototype.draw = function() {
-      this._cropCanvas.drawCropArea(this._image, [this._x, this._y], this._size, this._drawArea);
+      this._cropCanvas.drawCropArea(this._image, [this._x, this._y], this._size, this._drawArea, this._drawImage);
     };
+    CropArea.prototype.drawResultImage = function() {};
     CropArea.prototype.processMouseMove = function() {};
     CropArea.prototype.processMouseDown = function() {};
     CropArea.prototype.processMouseUp = function() {};
@@ -179,12 +180,7 @@ app.factory('cropCanvas', [
       };
 
       /* Crop Area */
-      this.drawCropArea = function(image, centerCoords, size, fnDrawClipPath) {
-        var xLeft, xRatio, yRatio, yTop;
-        xRatio = image.width / ctx.canvas.width;
-        yRatio = image.height / ctx.canvas.height;
-        xLeft = centerCoords[0] - (size / 2);
-        yTop = centerCoords[1] - (size / 2);
+      this.drawCropArea = function(image, centerCoords, size, fnDrawClipPath, fnDrawImage) {
         ctx.save();
         ctx.strokeStyle = colors.areaOutline;
         ctx.lineWidth = 2;
@@ -193,7 +189,7 @@ app.factory('cropCanvas', [
         ctx.stroke();
         ctx.clip();
         if (size > 0) {
-          ctx.drawImage(image, xLeft * xRatio, yTop * yRatio, size * xRatio, size * yRatio, xLeft, yTop, size, size);
+          fnDrawImage(ctx, image, centerCoords, size);
         }
         ctx.beginPath();
         fnDrawClipPath(ctx, centerCoords, size);
@@ -298,6 +294,48 @@ app.controller('ModalController', [
     $scope.content = '';
     $scope.type = '';
     $scope.url = '';
+    $scope.login = {
+      email: '',
+      password: '',
+      submit: function() {
+        if (!$scope.login.password.$invalid && !$scope.login.email.$invalid) {
+          return $http.post('/auth/login', {
+            email: $scope.login.email,
+            password: $scope.login.password
+          }).success(function(data) {
+            return alert(data.success);
+          }).error(function(data) {
+            var error;
+            error = data && data.error ? data.error : 'Přihlášení se nepodařilo, zkuste to prosím znovu';
+            return alert(error);
+          });
+        }
+      }
+    };
+    $scope.register = {
+      email: '',
+      name: '',
+      password: '',
+      confirmation: '',
+      submit: function() {
+        var emailValid, nameValid, passwordValid;
+        emailValid = !$scope.register.email.$invalid;
+        nameValid = !$scope.register.name.$invalid;
+        passwordValid = !$scope.register.password.$invalid && $scope.register.password === $scope.register.confirmation;
+        if (emailValid && nameValid && passwordValid) {
+          return $http.post('/auth/register', {
+            name: $scope.register.name,
+            email: $scope.register.email,
+            password: $scope.register.password,
+            confirmation: $scope.register.confirmation
+          }).success(function(data) {
+            return alert(data.success);
+          }).error(function(data) {
+            return alert(data.error);
+          });
+        }
+      }
+    };
     getModal = function(type, cb) {
       $scope.url = '/modal/' + type;
       return cb();
@@ -309,6 +347,9 @@ app.controller('ModalController', [
       return $scope.visible = false;
     };
     $scope.open = function(type) {
+      if ($scope.visible) {
+        $scope.close();
+      }
       return getModal(type, function() {
         $scope.type = type;
         return $scope.visible = true;
@@ -327,17 +368,32 @@ app.controller('AddProductController', [
       tags: [],
       categories: []
     };
+    $scope.croppFinished = false;
+    $scope.finishCropping = function() {
+      return $scope.croppFinished = true;
+    };
+    $scope.sizeAndType = function(image) {
+      var modifier, ratio;
+      if (image.type === 'hidden') {
+        return 1000;
+      }
+      modifier = image.contentType === "image/png" ? 100 : 1;
+      ratio = image.ratio ? image.ratio : 1;
+      return ratio * modifier;
+    };
     $scope.getImage = function(image) {
       $scope.product.selectedImage = image;
       $scope.product.croppedImage = '';
-      return $http.get('/products/getImage?url=' + escape(image.src)).success(function(data) {
-        $scope.product.selectedImage.ourSrc = data.src;
-        return console.log($scope.product.selectedImage);
+      return $http.get('/products/getImage?url=' + encodeURIComponent(image.src)).success(function(data) {
+        return $scope.product.selectedImage.ourSrc = data.src;
       });
     };
     $scope.getProduct = function() {
-      return $http.get('/products/getInfo?url=' + $scope.url).success(function(data) {
-        $scope.product = data.product;
+      return $http.get('/products/getInfo?url=' + encodeURIComponent($scope.url)).success(function(data) {
+        $scope.product = {
+          name: data.title,
+          images: data.images
+        };
         $scope.product.tags = [];
         return $scope.product.categories = [];
       });
@@ -350,6 +406,7 @@ app.controller('AddProductController', [
         price: $scope.product.price,
         url: $scope.url,
         image: $scope.product.croppedImage,
+        layout: $scope.product.selectedImage.type,
         tags: []
       };
       categories = {};
@@ -408,6 +465,7 @@ app.controller('ProductsController', [
       if (product.owned) {
         classes.push('owned');
       }
+      classes.push(product.layout);
       return classes.join(' ');
     };
     $scope.iWantThis = function(product, $event) {
@@ -543,25 +601,31 @@ app.directive('productImageOption', function() {
     link: function(scope, elem, attr, model) {
       var loadSize;
       loadSize = function() {
-        var h, ratio, viewValue, w, width;
-        w = elem.width();
-        h = elem.height();
+        var h, img, ratio, viewValue, w;
+        img = new Image();
+        img.src = model.$viewValue.src;
+        w = img.width;
+        h = img.height;
         viewValue = model.$viewValue;
         viewValue.width = w;
         viewValue.height = h;
-        if (h < w) {
+        ratio = viewValue.ratio = w > h ? w / h : h / w;
+        if (h < w && ratio > 1.5 && w >= 584 && h >= 286) {
           viewValue.type = 'landscape';
-        } else if (w < h) {
+        } else if (w < h && ratio > 1.5 && w >= 286 && h >= 584) {
           viewValue.type = 'portrait';
         } else {
-          viewValue.type = 'square';
+          if (w > h && (w < 286 || (h * ratio) < 286)) {
+            viewValue.type = 'hidden';
+          } else if (h > w && (h < 286 || (w * ratio))) {
+            viewValue.type = 'hidden';
+          } else if (w === h && w < 286) {
+            viewValue.type = 'hidden';
+          } else {
+            viewValue.type = 'square';
+          }
         }
-        ratio = h / 286;
-        width = w * ratio;
-        viewValue["class"] = "product-image option";
-        if (width < 286) {
-          viewValue["class"] += ' ' + 'hidden';
-        }
+        viewValue["class"] = "product-image option " + viewValue.type;
         return model.$setViewValue(viewValue);
       };
       if (elem.width()) {
@@ -1511,10 +1575,8 @@ app.factory('cropHost', [
         temp_canvas = void 0;
         temp_canvas = angular.element('<canvas></canvas>')[0];
         temp_ctx = temp_canvas.getContext('2d');
-        temp_canvas.width = resImgSize;
-        temp_canvas.height = resImgSize;
         if (image !== null) {
-          temp_ctx.drawImage(image, (theArea.getX() - (theArea.getSize() / 2)) * image.width / ctx.canvas.width, (theArea.getY() - (theArea.getSize() / 2)) * image.height / ctx.canvas.height, theArea.getSize() * image.width / ctx.canvas.width, theArea.getSize() * image.height / ctx.canvas.height, 0, 0, resImgSize, resImgSize);
+          theArea.drawResultImage(ctx, temp_ctx, temp_canvas, image, resImgSize);
         }
         if (resImgQuality !== null) {
           return temp_canvas.toDataURL(resImgFormat, resImgQuality);
@@ -1653,13 +1715,11 @@ app.factory('cropHost', [
         curX = theArea.getX();
         curY = theArea.getY();
         AreaClass = CropAreaSquare;
-
-        /*
-        				if type == 'portrait'
-        					AreaClass = CropAreaPortrait
-        				else if type == 'landscape'
-        					AreaClass = CropAreaLandscape
-         */
+        if (type === 'portrait') {
+          AreaClass = CropAreaPortrait;
+        } else if (type === 'landscape') {
+          AreaClass = CropAreaLandscape;
+        }
         theArea = new AreaClass(ctx, events);
         theArea.setMinSize(curMinSize);
         theArea.setSize(curSize);
@@ -1761,6 +1821,28 @@ app.factory('cropAreaLandscape', [
       vSize = size / 2;
       ctx.rect(centerCoords[0] - hSize, centerCoords[1] - vSize, size * 2, size);
     };
+    CropAreaLandscape.prototype._drawImage = function(ctx, image, centerCoords, size) {
+      var xLeft, xRatio, yRatio, yTop;
+      xRatio = image.width / ctx.canvas.width;
+      yRatio = image.height / ctx.canvas.height;
+      xLeft = centerCoords[0] - size;
+      yTop = centerCoords[1] - (size / 2);
+      return ctx.drawImage(image, xLeft * xRatio, yTop * yRatio, size * xRatio * 2, size * yRatio, xLeft, yTop, size * 2, size);
+    };
+    CropAreaLandscape.prototype.drawResultImage = function(ctx, draw_ctx, canvas, image, resultSize) {
+      var cropHeight, cropWidth, cropX, cropY, resultHeight, resultWidth, xRatio, yRatio;
+      xRatio = image.width / ctx.canvas.width;
+      yRatio = image.height / ctx.canvas.height;
+      cropX = (this.getX() - this.getSize()) * xRatio;
+      cropY = (this.getY() - (this.getSize() / 2)) * yRatio;
+      cropWidth = this.getSize() * xRatio * 2;
+      cropHeight = this.getSize() * yRatio;
+      resultWidth = resultSize * 2;
+      resultHeight = resultSize;
+      canvas.width = resultWidth;
+      canvas.height = resultHeight;
+      return draw_ctx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, resultWidth, resultHeight);
+    };
     CropAreaLandscape.prototype.draw = function() {
       var i, len, resizeIconCenterCoords, resizeIconsCenterCoords;
       CropArea.prototype.draw.apply(this, arguments);
@@ -1793,7 +1875,7 @@ app.factory('cropAreaLandscape', [
         switch (this._resizeCtrlIsDragging) {
           case 0:
             xMulti = -1;
-            yMulti = -0.5;
+            yMulti = -1;
             cursor = 'nwse-resize';
             break;
           case 1:
@@ -1894,6 +1976,31 @@ app.factory('cropAreaLandscape', [
       this._posDragStartX = 0;
       this._posDragStartY = 0;
     };
+    CropAreaLandscape.prototype._dontDragOutside = function() {
+      var h, hSize, vSize, w;
+      h = this._ctx.canvas.height;
+      w = this._ctx.canvas.width;
+      hSize = this._size * 2;
+      vSize = this._size;
+      if (hSize > w) {
+        this._size = w / 2;
+      }
+      if (vSize > h) {
+        this._size = h;
+      }
+      if (this._x < this._size) {
+        this._x = this._size;
+      }
+      if (this._x > w - this._size) {
+        this._x = w - this._size;
+      }
+      if (this._y < this._size / 2) {
+        this._y = this._size / 2;
+      }
+      if (this._y > h - (this._size / 2)) {
+        this._y = h - (this._size / 2);
+      }
+    };
     return CropAreaLandscape;
   }
 ]);
@@ -1909,7 +2016,8 @@ app.factory('cropAreaPortrait', [
       this._iconMoveNormalRatio = 0.9;
       this._iconMoveHoverRatio = 1.2;
       this._resizeCtrlNormalRadius = this._resizeCtrlBaseRadius * this._resizeCtrlNormalRatio;
-      this._resizeCtrlHoverRadius = this._resizeCtrlBaseRadius * this._resizeCtrlHoverRatio;
+      this._resizeCtrlHoverVerticalRadius = this._resizeCtrlBaseRadius * this._resizeCtrlHoverRatio * 2;
+      this._resizeCtrlHoverHorizontalRadius = this._resizeCtrlBaseRadius * this._resizeCtrlHoverRatio;
       this._posDragStartX = 0;
       this._posDragStartY = 0;
       this._posResizeStartX = 0;
@@ -1951,7 +2059,7 @@ app.factory('cropAreaPortrait', [
       len = resizeIconsCenterCoords.length;
       while (i < len) {
         resizeIconCenterCoords = resizeIconsCenterCoords[i];
-        if (coord[0] > resizeIconCenterCoords[0] - this._resizeCtrlHoverRadius && coord[0] < resizeIconCenterCoords[0] + this._resizeCtrlHoverRadius && coord[1] > resizeIconCenterCoords[1] - this._resizeCtrlHoverRadius && coord[1] < resizeIconCenterCoords[1] + this._resizeCtrlHoverRadius) {
+        if (coord[0] > resizeIconCenterCoords[0] - this._resizeCtrlHoverHorizontalRadius && coord[0] < resizeIconCenterCoords[0] + this._resizeCtrlHoverHorizontalRadius && coord[1] > resizeIconCenterCoords[1] - this._resizeCtrlHoverVerticalRadius && coord[1] < resizeIconCenterCoords[1] + this._resizeCtrlHoverVerticalRadius) {
           res = i;
           break;
         }
@@ -1965,11 +2073,19 @@ app.factory('cropAreaPortrait', [
       vSize = size;
       ctx.rect(centerCoords[0] - hSize, centerCoords[1] - vSize, size, size * 2);
     };
+    CropAreaPortrait.prototype._drawImage = function(ctx, image, centerCoords, size) {
+      var xLeft, xRatio, yRatio, yTop;
+      xRatio = image.width / ctx.canvas.width;
+      yRatio = image.height / ctx.canvas.height;
+      xLeft = centerCoords[0] - (size / 2);
+      yTop = centerCoords[1] - size;
+      return ctx.drawImage(image, xLeft * xRatio, yTop * yRatio, size * xRatio, size * yRatio * 2, xLeft, yTop, size, size * 2);
+    };
     CropAreaPortrait.prototype.draw = function() {
       var i, len, resizeIconCenterCoords, resizeIconsCenterCoords;
       CropArea.prototype.draw.apply(this, arguments);
       this._cropCanvas.drawIconMove([this._x, this._y], this._areaIsHover ? this._iconMoveHoverRatio : this._iconMoveNormalRatio);
-      resizeIconsCenterCoords = this._calcSquareCorners();
+      resizeIconsCenterCoords = this._calcCorners();
       i = 0;
       len = resizeIconsCenterCoords.length;
       while (i < len) {
@@ -1977,6 +2093,20 @@ app.factory('cropAreaPortrait', [
         this._cropCanvas.drawIconResizeCircle(resizeIconCenterCoords, this._resizeCtrlBaseRadius, this._resizeCtrlIsHover === i ? this._resizeCtrlHoverRatio : this._resizeCtrlNormalRatio);
         i++;
       }
+    };
+    CropAreaPortrait.prototype.drawResultImage = function(ctx, draw_ctx, canvas, image, resultSize) {
+      var cropHeight, cropWidth, cropX, cropY, resultHeight, resultWidth, xRatio, yRatio;
+      xRatio = image.width / ctx.canvas.width;
+      yRatio = image.height / ctx.canvas.height;
+      cropX = (this.getX() - (this.getSize() / 2)) * xRatio;
+      cropY = (this.getY() - this.getSize()) * yRatio;
+      cropWidth = this.getSize() * xRatio;
+      cropHeight = this.getSize() * yRatio * 2;
+      resultWidth = resultSize;
+      resultHeight = resultSize * 2;
+      canvas.width = resultWidth;
+      canvas.height = resultHeight;
+      return draw_ctx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, resultWidth, resultHeight);
     };
     CropAreaPortrait.prototype.processMouseMove = function(mouseCurX, mouseCurY) {
       var cursor, hoveredResizeBox, iFR, iFX, iFY, posModifier, res, wasSize, xMulti, yMulti;
@@ -2098,6 +2228,31 @@ app.factory('cropAreaPortrait', [
       this._posDragStartX = 0;
       this._posDragStartY = 0;
     };
+    CropAreaPortrait.prototype._dontDragOutside = function() {
+      var h, hSize, vSize, w;
+      h = this._ctx.canvas.height;
+      w = this._ctx.canvas.width;
+      hSize = this._size;
+      vSize = this._size * 2;
+      if (hSize > w) {
+        this._size = w;
+      }
+      if (vSize > h) {
+        this._size = h / 2;
+      }
+      if (this._x < this._size / 2) {
+        this._x = this._size / 2;
+      }
+      if (this._x > w - this._size / 2) {
+        this._x = w - this._size / 2;
+      }
+      if (this._y < this._size) {
+        this._y = this._size;
+      }
+      if (this._y > h - this._size) {
+        this._y = h - this._size;
+      }
+    };
     return CropAreaPortrait;
   }
 ]);
@@ -2190,6 +2345,14 @@ app.factory('cropAreaSquare', [
       hSize = size / 2;
       ctx.rect(centerCoords[0] - hSize, centerCoords[1] - hSize, size, size);
     };
+    CropAreaSquare.prototype._drawImage = function(ctx, image, centerCoords, size) {
+      var xLeft, xRatio, yRatio, yTop;
+      xRatio = image.width / ctx.canvas.width;
+      yRatio = image.height / ctx.canvas.height;
+      xLeft = centerCoords[0] - (size / 2);
+      yTop = centerCoords[1] - (size / 2);
+      return ctx.drawImage(image, xLeft * xRatio, yTop * yRatio, size * xRatio, size * yRatio, xLeft, yTop, size, size);
+    };
     CropAreaSquare.prototype.draw = function() {
       var i, len, resizeIconCenterCoords, resizeIconsCenterCoords;
       CropArea.prototype.draw.apply(this, arguments);
@@ -2202,6 +2365,20 @@ app.factory('cropAreaSquare', [
         this._cropCanvas.drawIconResizeCircle(resizeIconCenterCoords, this._resizeCtrlBaseRadius, this._resizeCtrlIsHover === i ? this._resizeCtrlHoverRatio : this._resizeCtrlNormalRatio);
         i++;
       }
+    };
+    CropAreaSquare.prototype.drawResultImage = function(ctx, draw_ctx, canvas, image, resultSize) {
+      var cropHeight, cropWidth, cropX, cropY, resultHeight, resultWidth, xRatio, yRatio;
+      xRatio = image.width / ctx.canvas.width;
+      yRatio = image.height / ctx.canvas.height;
+      cropX = (this.getX() - (this.getSize() / 2)) * xRatio;
+      cropY = (this.getY() - this.getSize() / 2) * yRatio;
+      cropWidth = this.getSize() * xRatio;
+      cropHeight = this.getSize() * yRatio;
+      resultWidth = resultSize;
+      resultHeight = resultSize;
+      canvas.width = resultWidth;
+      canvas.height = resultHeight;
+      return draw_ctx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, resultWidth, resultHeight);
     };
     CropAreaSquare.prototype.processMouseMove = function(mouseCurX, mouseCurY) {
       var cursor, hoveredResizeBox, iFR, iFX, iFY, posModifier, res, wasSize, xMulti, yMulti;

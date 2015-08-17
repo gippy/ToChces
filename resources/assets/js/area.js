@@ -75,8 +75,9 @@ app.factory('cropArea', [
     };
     CropArea.prototype._drawArea = function() {};
     CropArea.prototype.draw = function() {
-      this._cropCanvas.drawCropArea(this._image, [this._x, this._y], this._size, this._drawArea);
+      this._cropCanvas.drawCropArea(this._image, [this._x, this._y], this._size, this._drawArea, this._drawImage);
     };
+    CropArea.prototype.drawResultImage = function() {};
     CropArea.prototype.processMouseMove = function() {};
     CropArea.prototype.processMouseDown = function() {};
     CropArea.prototype.processMouseUp = function() {};

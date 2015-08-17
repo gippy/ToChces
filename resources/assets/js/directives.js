@@ -5,25 +5,31 @@ app.directive('productImageOption', function() {
     link: function(scope, elem, attr, model) {
       var loadSize;
       loadSize = function() {
-        var h, ratio, viewValue, w, width;
-        w = elem.width();
-        h = elem.height();
+        var h, img, ratio, viewValue, w;
+        img = new Image();
+        img.src = model.$viewValue.src;
+        w = img.width;
+        h = img.height;
         viewValue = model.$viewValue;
         viewValue.width = w;
         viewValue.height = h;
-        if (h < w) {
+        ratio = viewValue.ratio = w > h ? w / h : h / w;
+        if (h < w && ratio > 1.5 && w >= 584 && h >= 286) {
           viewValue.type = 'landscape';
-        } else if (w < h) {
+        } else if (w < h && ratio > 1.5 && w >= 286 && h >= 584) {
           viewValue.type = 'portrait';
         } else {
-          viewValue.type = 'square';
+          if (w > h && (w < 286 || (h * ratio) < 286)) {
+            viewValue.type = 'hidden';
+          } else if (h > w && (h < 286 || (w * ratio))) {
+            viewValue.type = 'hidden';
+          } else if (w === h && w < 286) {
+            viewValue.type = 'hidden';
+          } else {
+            viewValue.type = 'square';
+          }
         }
-        ratio = h / 286;
-        width = w * ratio;
-        viewValue["class"] = "product-image option";
-        if (width < 286) {
-          viewValue["class"] += ' ' + 'hidden';
-        }
+        viewValue["class"] = "product-image option " + viewValue.type;
         return model.$setViewValue(viewValue);
       };
       if (elem.width()) {

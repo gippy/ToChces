@@ -31,7 +31,7 @@ input[type="checkbox"]:checked + label span {
   background:url("/images/x.png") 0px 0px no-repeat;
 }
 
-input[type="text"], textarea {
+input[type="text"], input[type="email"], input[type="password"], textarea {
   box-sizing: border-box;
   border: 1px solid @accent_color;
   background: white;
@@ -94,3 +94,34 @@ label {
   line-height: 30px;
 }
 
+.inline-field {
+  padding: @baseline/2;
+
+  &:after {
+    content:"";
+    display:table;
+    clear:both;
+  }
+  input, label {
+    box-sizing: border-box;
+    float: left;
+    display: inline;
+	height: 38px;
+	font-size: @baseline;
+	line-height: @baseline * 1.4;
+	padding: 5px;
+  }
+  input {
+    width: 75%;
+  }
+  label {
+    width: 25%;
+	background-color: @accent_color;
+	color: white;
+  }
+}
+
+input.ng-invalid {
+  border-bottom-color: darkred!important;
+  border-right-color: darkred!important;
+}

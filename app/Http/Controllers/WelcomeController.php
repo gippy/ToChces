@@ -19,7 +19,6 @@ class WelcomeController extends Controller {
 	 * Create a new controller instance.
 	 */
 	public function __construct() {
-		$this->middleware('guest');
 	}
 
 	/**
@@ -29,7 +28,12 @@ class WelcomeController extends Controller {
 	 */
 	public function index()
 	{
+		$this->middleware('guest');
 		return view('welcome');
+	}
+
+	public function terms(){
+		return view('others/terms');
 	}
 
 }

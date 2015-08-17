@@ -19,4 +19,6 @@ interface UserRepository
 
 	public function findByEmail($email);
 
+	public function findByVerification($verification);
+
 }

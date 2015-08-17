@@ -7,6 +7,7 @@
 <p class="mrg-t-m">
     <a href="/auth/facebook" class="btn facebook">facebook</a>
     <a href="/auth/google" class="btn google">google+</a>
+    <a href="#" ng-click="open('login-email')" class="btn">email</a>
 </p>
 
 <p class="mrg-t-l pad-b-xs">Přihlášením souhlasíte s <a href="/terms" target="_blank">podmínkami</a></p>

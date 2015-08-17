@@ -80,6 +80,33 @@ app.factory 'cropAreaLandscape', [
 			ctx.rect centerCoords[0] - hSize, centerCoords[1] - vSize, size*2, size
 			return
 
+		CropAreaLandscape::_drawImage  = (ctx, image, centerCoords, size) ->
+			xRatio = image.width / ctx.canvas.width
+			yRatio = image.height / ctx.canvas.height
+
+			xLeft = centerCoords[0] - (size)
+			yTop = centerCoords[1] - (size / 2)
+
+			ctx.drawImage image, xLeft * xRatio, yTop * yRatio, size * xRatio * 2, size * yRatio, xLeft, yTop, size * 2, size
+
+		CropAreaLandscape::drawResultImage = (ctx, draw_ctx, canvas, image, resultSize) ->
+			xRatio = image.width / ctx.canvas.width
+			yRatio = image.height / ctx.canvas.height
+
+			cropX = (@getX() - @getSize()) * xRatio
+			cropY = (@getY() - (@getSize() / 2)) * yRatio
+
+			cropWidth = @getSize() * xRatio * 2
+			cropHeight = @getSize() * yRatio
+
+			resultWidth = resultSize * 2
+			resultHeight = resultSize
+
+			canvas.width = resultWidth
+			canvas.height = resultHeight
+
+			draw_ctx.drawImage image, cropX, cropY, cropWidth , cropHeight , 0, 0, resultWidth, resultHeight
+
 		CropAreaLandscape::draw = ->
 			CropArea::draw.apply this, arguments
 			# draw move icon
@@ -116,7 +143,7 @@ app.factory 'cropAreaLandscape', [
 					when 0
 					# Top Left
 						xMulti = -1
-						yMulti = -0.5
+						yMulti = -1
 						cursor = 'nwse-resize'
 					when 1
 					# Top Right
@@ -215,6 +242,32 @@ app.factory 'cropAreaLandscape', [
 			@_resizeCtrlIsHover = -1
 			@_posDragStartX = 0
 			@_posDragStartY = 0
+			return
+
+		CropAreaLandscape::_dontDragOutside = ->
+			h = @_ctx.canvas.height
+			w = @_ctx.canvas.width
+
+			hSize = @_size * 2
+			vSize = @_size
+
+			if hSize > w
+				@_size = w / 2
+			if vSize > h
+				@_size = h
+
+			if @_x < @_size
+				@_x = @_size
+
+			if @_x > w - @_size
+				@_x = w - @_size
+
+			if @_y < @_size / 2
+				@_y = @_size / 2
+
+			if @_y > h - (@_size / 2)
+				@_y = h - (@_size / 2)
+
 			return
 
 		CropAreaLandscape

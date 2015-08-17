@@ -88,32 +88,45 @@ class ProductsController extends Controller {
 		return response()->json(['path' => '/profile']);
 	}
 
+	protected function getURL(){
+		$url = Request::query('url', '');
+		if (!$url) return null;
+
+		$url = urldecode($url);
+
+		$url = filter_var($url, FILTER_SANITIZE_URL);
+
+		Log::debug($url);
+
+		if (!filter_var($url, FILTER_VALIDATE_URL) === false) {
+			return $url;
+		} else {
+			return null;
+		}
+	}
+
 	public function getInfo()
 	{
-		$url = Request::query('url');
+		$url = $this->getURL();
 		if (!$url) {
 			return $this->jsonError(400, 'Nebyl předán odkaz na internetovou stránku.');
 		}
 
-		try {
-			$data = $this->makeRequestWithHeaders($url);
-		} catch (\Exception $e) {
-			Log::error($e);
-			throw $e;
+		$output = shell_exec('phantomjs ' . env('LOCAL_IMAGESNIFF') . ' "'. $url .'"');
+
+		Log::debug($output);
+
+		if (!$output) {
+			return $this->jsonError(500, 'Nepodařilo se nám načíst data ze zadané stránky.');
 		}
 
-		$contentType =  @$data['header']['content-type'] ? @$data['header']['content-type'] : '';
-		if (strpos($contentType, 'text/html') === false) {
-			return $this->jsonError(400, 'Zadaný odkaz nevede na internetovou stránku.');
-		}
+		$output = json_decode(substr($output, strpos($output, '{')));
 
-
-		$product = $this->parseHTML($url, @$data['body']);
-		return response()->json(['product' => $product]);
+		return response()->json($output);
 	}
 
 	public function getImage(){
-		$url = Request::query('url');
+		$url = $this->getURL();
 		if (!$url) {
 			return $this->jsonError(400, 'Nebyl předán odkaz na fotku.');
 		}
