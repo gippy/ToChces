@@ -17,7 +17,7 @@ class EloquentTagRepository implements TagRepository
 	public function saveMultiple(Product $product, array $tags){
 		$query = Tag::whereIn('name', $tags);
 		$productTags = $query->get();
-		$diffArray = $query->lists('name');
+		$diffArray = $query->lists('name')->all();
 		$newTags = array_diff($tags, $diffArray);
 
 		$ids = [];
