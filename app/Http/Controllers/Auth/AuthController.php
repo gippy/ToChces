@@ -141,7 +141,7 @@ class AuthController extends Controller {
 	    $userData = Socialize::with($provider)->user();
 		$social = $this->socialRepo->createOrUpdate($provider, $userData);
 	    $user = $social->user;
-		$this->auth->login($user, true);
+		Auth::login($user, true);
 
 		return redirect('/');
 	}
