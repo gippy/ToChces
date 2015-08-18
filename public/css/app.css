@@ -931,6 +931,7 @@ a.btn:visited {
 }
 .product.portrait > img {
   height: 584px;
+  width: 286px;
 }
 .product.portrait .info {
   height: 584px;
