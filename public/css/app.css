@@ -989,22 +989,22 @@ img.product-image.hidden {
   display: block;
   float: left;
   text-align: center;
-  max-width: 590px;
-  max-height: 590px;
+  max-width: 584px;
+  max-height: 584px;
 }
 .select-image .slide.hidden {
   display: none;
 }
 .select-image .slide.landscape {
-  width: 590px;
+  width: 584px;
   height: auto;
 }
 .select-image .slide.portrait {
-  height: 590px;
-  width: auto;
+  max-height: 590px;
+  width: 286px;
 }
 .select-image .slide.square {
-  width: 280px;
+  width: 286px;
   height: auto;
 }
 .select-image .slide img {
