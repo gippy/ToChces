@@ -17,7 +17,7 @@
         </div>
 
         <div class="selected-image" ng-if="product.selectedImage.src"  ng-show="!croppFinished" style="text-align:center;">
-            <label class="h2" style="text-align: center;">Ktera cast fotky se Vam nejvice líbí?</label>
+            <label class="h2" style="text-align: center;">Která část fotky se Vám nejvíce líbí?</label>
             <div class="crop-area" ng-class="image.class">
                 <div class="crop" img-crop image="product.selectedImage.ourSrc" area-type="{{product.selectedImage.type}}" result-image="product.croppedImage" result-image-size="286">
                     &nbsp;
@@ -28,8 +28,8 @@
 
         <div class="data mrg-b-m" ng-if="croppFinished">
 
-            <div ng-if="product.croppedImage" class="cropped-image mrg-t-s mrg-b-s">
-                <img ng-src="{{product.croppedImage}}" />
+            <div ng-if="product.finalSrc" class="cropped-image mrg-t-s mrg-b-s">
+                <img ng-src="{{product.finalSrc}}" />
             </div>
 
             <div>

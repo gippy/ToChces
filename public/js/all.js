@@ -366,11 +366,13 @@ app.controller('AddProductController', [
       name: '',
       images: '',
       tags: [],
-      categories: []
+      categories: [],
+      finalSrc: ''
     };
     $scope.croppFinished = false;
     $scope.finishCropping = function() {
-      return $scope.croppFinished = true;
+      $scope.croppFinished = true;
+      return $scope.product.finalSrc = $scope.product.croppedImage;
     };
     $scope.sizeAndType = function(image) {
       var modifier, ratio;
@@ -405,7 +407,7 @@ app.controller('AddProductController', [
         vendor: $scope.product.vendor,
         price: $scope.product.price,
         url: $scope.url,
-        image: $scope.product.croppedImage,
+        image: $scope.product.finalSrc,
         layout: $scope.product.selectedImage.type,
         tags: []
       };
@@ -2106,6 +2108,7 @@ app.factory('cropAreaPortrait', [
       resultHeight = resultSize * 2;
       canvas.width = resultWidth;
       canvas.height = resultHeight;
+      console.log('draw image', cropX, cropY, cropWidth, cropHeight, resultWidth, resultHeight);
       return draw_ctx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, resultWidth, resultHeight);
     };
     CropAreaPortrait.prototype.processMouseMove = function(mouseCurX, mouseCurY) {

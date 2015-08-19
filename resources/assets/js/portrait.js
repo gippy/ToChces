@@ -99,6 +99,7 @@ app.factory('cropAreaPortrait', [
       resultHeight = resultSize * 2;
       canvas.width = resultWidth;
       canvas.height = resultHeight;
+      console.log('draw image', cropX, cropY, cropWidth, cropHeight, resultWidth, resultHeight);
       return draw_ctx.drawImage(image, cropX, cropY, cropWidth, cropHeight, 0, 0, resultWidth, resultHeight);
     };
     CropAreaPortrait.prototype.processMouseMove = function(mouseCurX, mouseCurY) {

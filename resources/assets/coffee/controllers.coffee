@@ -105,10 +105,13 @@ app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $htt
 		images: ''
 		tags: []
 		categories: []
+		finalSrc: ''
 	}
 	$scope.croppFinished = false
 
-	$scope.finishCropping = () -> $scope.croppFinished = true
+	$scope.finishCropping = () ->
+		$scope.croppFinished = true
+		$scope.product.finalSrc = $scope.product.croppedImage
 
 	$scope.sizeAndType = (image) ->
 		if image.type == 'hidden' then return  1000
@@ -137,7 +140,7 @@ app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $htt
 			vendor: $scope.product.vendor
 			price: $scope.product.price
 			url: $scope.url
-			image: $scope.product.croppedImage
+			image: $scope.product.finalSrc
 			layout: $scope.product.selectedImage.type
 			tags: []
 
