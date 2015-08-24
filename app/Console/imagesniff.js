@@ -62,16 +62,42 @@ function createHAR(title, resources)
 }
 
 var page = require('webpage').create(),
-    system = require('system');
+    system = require('system'),
+    completeTimeout = null,
+    timeout = null,
+    loadingData = false;
 
-function closeConnection(){
-	page.endTime = new Date();
-	page.title = page.evaluate(function () {
-		return document.title;
-	});
-	var har = createHAR(page.title, page.resources);
-	console.log(JSON.stringify(har, undefined, 4));
-	phantom.exit();
+function closeConnection(force){
+	if (force || loadingData == false) {
+
+		page.endTime = new Date();
+		page.title = page.evaluate(function () {
+			return document.title;
+		});
+
+		var har = createHAR(page.title, page.resources);
+
+		if(!har.images.length && !force){
+			timeout = window.setTimeout(waitAndClose, 2000);
+			loadingData = false;
+		} else {
+			window.clearTimeout(completeTimeout);
+			console.log(JSON.stringify(har, undefined, 4));
+			phantom.exit();
+		}	
+	} else {
+		timeout = window.setTimeout(waitAndClose, 2000);
+		loadingData = false;
+	}	
+}
+
+function waitAndClose(){
+	if (loadingData) {
+		timeout = window.setTimeout(waitAndClose, 2000);
+		loadingData = false;
+	} else {
+		window.setTimeout(closeConnection, 2000);
+	}
 }
 
 if (system.args.length === 1) {
@@ -92,6 +118,7 @@ if (system.args.length === 1) {
             startReply: null,
             endReply: null
         };
+        loadingData = true;
     };
 
     page.onResourceReceived = function (res) {
@@ -104,16 +131,13 @@ if (system.args.length === 1) {
     };
 
 	page.onLoadFinished = function (status){
-		if (status !== 'success') {
-			console.log('FAIL to load the address');
-			phantom.exit(1);
-		} else {
-			window.clearTimeout(timeout);
-			closeConnection();
-		}
+		waitAndClose();
 	};
 
     page.open(page.address);
 
-	var timeout = window.setTimeout(closeConnection, 10000);
+	completeTimeout = window.setTimeout(function(){
+		window.clearTimeout(timeout);
+		closeConnection(true);
+	}, 30000);
 }

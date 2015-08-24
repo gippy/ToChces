@@ -92,7 +92,7 @@ class ProductsController extends Controller {
 		$url = Request::query('url', '');
 		if (!$url) return null;
 
-		$url = urldecode($url);
+		Log::debug($url);
 
 		$url = filter_var($url, FILTER_SANITIZE_URL);
 
@@ -111,6 +111,8 @@ class ProductsController extends Controller {
 		if (!$url) {
 			return $this->jsonError(400, 'Nebyl předán odkaz na internetovou stránku.');
 		}
+
+		Log::debug('phantomjs ' . env('LOCAL_IMAGESNIFF') . ' "'. $url .'"');
 
 		$output = shell_exec('phantomjs ' . env('LOCAL_IMAGESNIFF') . ' "'. $url .'"');
 
