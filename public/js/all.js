@@ -617,11 +617,11 @@ app.directive('productImageOption', function() {
         } else if (w < h && ratio > 1.5 && w >= 286 && h >= 584) {
           viewValue.type = 'portrait';
         } else {
-          if (w > h && (w < 286 || (h * ratio) < 286)) {
+          if (w > h && (w < 200 || (h * ratio) < 200)) {
             viewValue.type = 'hidden';
-          } else if (h > w && (h < 286 || (w * ratio))) {
+          } else if (h > w && (h < 200 || (w * ratio) < 200)) {
             viewValue.type = 'hidden';
-          } else if (w === h && w < 286) {
+          } else if (w === h && w < 200) {
             viewValue.type = 'hidden';
           } else {
             viewValue.type = 'square';
