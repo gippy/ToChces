@@ -1,3 +1,3 @@
 var app;
 
-app = angular.module('ToChcete', ['ngTagsInput']);
+app = angular.module('ToChcete', ['ngTagsInput', 'masonry']);

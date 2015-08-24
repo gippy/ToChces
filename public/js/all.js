@@ -1,6 +1,6 @@
 var app;
 
-app = angular.module('ToChcete', ['ngTagsInput']);
+app = angular.module('ToChcete', ['ngTagsInput', 'masonry']);
 
 app.factory('cropArea', [
   'cropCanvas', function(CropCanvas) {
@@ -370,6 +370,51 @@ app.controller('AddProductController', [
       finalSrc: ''
     };
     $scope.croppFinished = false;
+    $scope.customFile = null;
+    $scope.validateFile = function(fileName) {
+      var allowedExtensions, extension, fileExtension, i, len;
+      allowedExtensions = ["jpg", 'jpeg', "png"];
+      fileExtension = fileName.split('.').pop();
+      for (i = 0, len = allowedExtensions.length; i < len; i++) {
+        extension = allowedExtensions[i];
+        if (extension === fileExtension) {
+          return true;
+        }
+      }
+      return false;
+    };
+    $scope.$on('fileSelected', function(event, args) {
+      return $scope.$apply(function() {
+        console.log(args.files);
+        if ($scope.validateFile(args.files[0].name)) {
+          $scope.customFile = args.files[0];
+          return $scope.uploadFile();
+        }
+      });
+    });
+    $scope.uploadFile = function() {
+      var file, formData;
+      file = $scope.customFile;
+      if (file) {
+        formData = new FormData();
+        formData.append('file', file);
+        return $http.post('/product/saveTempImage', formData, {
+          transformRequest: angular.identity,
+          headers: {
+            'Content-type': void 0
+          }
+        }).success(function(data) {
+          $scope.images = [data];
+          $scope.product.croppedImage = null;
+          $scope.product.selectedImage = data;
+          $scope.product.selectedImage.ourSrc = data.src;
+          return $scope.customFile = null;
+        }).error(function() {
+          $scope.customFile = null;
+          return alert('Bohužel se nám nepodařilo zpracovat nahrané foto, zkuste to prosím znovu.');
+        });
+      }
+    };
     $scope.finishCropping = function() {
       $scope.croppFinished = true;
       return $scope.product.finalSrc = $scope.product.croppedImage;
@@ -645,7 +690,7 @@ app.directive('productImageOption', function() {
   };
 });
 
-app.directive('scrollOver', function($window) {
+app.directive('scrollOver', function($window, $document) {
   return {
     restrict: 'A',
     scope: {
@@ -653,22 +698,52 @@ app.directive('scrollOver', function($window) {
       onChange: '&'
     },
     link: function(scope, element, attrs) {
-      var handler, windowElement;
+      var handler, lastPosition, timeout, windowElement;
       scope.overScroll = false;
       windowElement = angular.element($window);
+      timeout = null;
+      lastPosition = null;
       handler = function() {
-        var position;
+        var currPosition, position;
         position = windowElement.scrollTop();
         if (scope.overScroll && position < scope.limit) {
           scope.overScroll = false;
-          return scope.onChange();
+          scope.onChange();
         } else if (!scope.overScroll && position > scope.limit) {
           scope.overScroll = true;
-          return scope.onChange();
+          scope.onChange();
+        }
+        currPosition = position + windowElement.height();
+        if (currPosition > $document.height() - 50) {
+          if (currPosition > lastPosition) {
+            lastPosition = currPosition;
+            window.clearTimeout(timeout);
+            return timeout = window.setTimeout(function() {
+              scope.$emit("scrolledToBottom", {});
+              return console.log('bottom');
+            }, 1000);
+          }
         }
       };
       windowElement.on('scroll', scope.$apply.bind(scope, handler));
       return handler();
+    }
+  };
+});
+
+app.directive('fileField', function() {
+  return {
+    scope: true,
+    link: function(scope, element, attrs) {
+      return element.bind('change', function(event) {
+        var files;
+        files = event.target.files;
+        if (files.length) {
+          return scope.$emit("fileSelected", {
+            files: files
+          });
+        }
+      });
     }
   };
 });
@@ -1711,7 +1786,6 @@ app.factory('cropHost', [
       };
       this.setAreaType = function(type) {
         var AreaClass, curMinSize, curSize, curX, curY;
-        console.log(type);
         curSize = theArea.getSize();
         curMinSize = theArea.getMinSize();
         curX = theArea.getX();

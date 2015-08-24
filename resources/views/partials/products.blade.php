@@ -1,5 +1,5 @@
-<div class="products mrg-b-m pad-t-l" ng-controller="ProductsController">
-    <div ng-repeat="product in products" class="product-item" show-details item="product"  ng-class="getClasses(product)">
+<div class="products mrg-b-m pad-t-l" ng-controller="ProductsController" masonry='{ "transitionDuration" : "0.4s" , "columnWidth": 304, "itemSelector" : ".product-item"}'>
+    <div masonry-tile ng-repeat="product in products" class="product-item" show-details item="product"  ng-class="getClasses(product)">
 
         <a ng-href="/product/{{product.id}}">
             <img class="product-image" ng-attr-alt="{{product.name}}" ng-src="{{product.image}}" />

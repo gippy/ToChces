@@ -63,6 +63,7 @@ Route::get('/product/{product}/like', 'ProductsController@like');
 Route::get('/product/{product}/dislike', 'ProductsController@dislike');
 Route::get('/product/{product}/own', 'ProductsController@own');
 Route::get('/product/{product}/disown', 'ProductsController@disown');
+Route::post('/product/saveTempImage', 'ProductsController@saveTemp');
 
 Route::get('/add', [
 	'as' => 'addProduct', 'uses' => 'ProductsController@add'

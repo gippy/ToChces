@@ -35,3 +35,36 @@ a.btn, a.btn:hover, a.btn:active, a.btn:visited{
 	background-color: darken(@color-google, 10%);
   }
 }
+
+.btn-file {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  width: 200px;
+  border: 1px solid @accent_color;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: white;
+  font-size: 0.8em;
+  vertical-align: bottom;
+
+  i {
+	font-size: 0.8em;
+  }
+
+  input[type=file] {
+	position: absolute;
+	left: 0;
+	top: 0;
+	min-width: 100%;
+	min-height: 100%;
+	font-size: 999px;
+	filter: alpha(opacity=0);
+	opacity: 0;
+	outline: none;
+	background: transparent;
+	cursor: inherit;
+	display: block;
+  }
+}

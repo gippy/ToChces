@@ -21,9 +21,9 @@ app.directive 'productImageOption', () ->
 				else if w < h and ratio > 1.5 and w >= 286 and h >= 584
 					viewValue.type = 'portrait'
 				else
-					if w > h and ( w < 286 or (h * ratio) < 286 ) then viewValue.type = 'hidden'
-					else if h > w and ( h < 286 or (w * ratio) ) then viewValue.type = 'hidden'
-					else if w is h and w < 286 then viewValue.type = 'hidden'
+					if w > h and ( w < 200 or (h * ratio) < 200 ) then viewValue.type = 'hidden'
+					else if h > w and ( h < 200 or (w * ratio) < 200 ) then viewValue.type = 'hidden'
+					else if w is h and w < 200 then viewValue.type = 'hidden'
 					else viewValue.type = 'square'
 
 				viewValue.class="product-image option " + viewValue.type
@@ -40,7 +40,7 @@ app.directive 'productImageOption', () ->
 				model.$setViewValue(viewValue);
 	}
 
-app.directive 'scrollOver', ($window) -> return {
+app.directive 'scrollOver', ($window, $document) -> return {
 	restrict: 'A'
 	scope:
 		limit: '@'
@@ -49,6 +49,8 @@ app.directive 'scrollOver', ($window) -> return {
 		scope.overScroll = false
 
 		windowElement = angular.element($window)
+		timeout = null
+		lastPosition = null
 
 		handler = () ->
 			position = windowElement.scrollTop()
@@ -59,9 +61,29 @@ app.directive 'scrollOver', ($window) -> return {
 				scope.overScroll = true
 				scope.onChange()
 
+			currPosition = position + windowElement.height()
+			if currPosition > $document.height() - 50
+				if currPosition > lastPosition
+					lastPosition = currPosition
+					window.clearTimeout(timeout)
+					timeout = window.setTimeout(
+						() ->
+							scope.$emit "scrolledToBottom", {}
+							console.log 'bottom'
+						, 1000
+					)
+
 		windowElement.on 'scroll', scope.$apply.bind(scope, handler)
 		handler()
 
+}
+
+app.directive 'fileField', () -> {
+	scope: true
+	link: (scope, element, attrs) ->
+		element.bind 'change', (event) ->
+			files = event.target.files
+			if files.length then scope.$emit "fileSelected", {files: files}
 }
 
 

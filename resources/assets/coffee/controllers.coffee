@@ -108,6 +108,39 @@ app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $htt
 		finalSrc: ''
 	}
 	$scope.croppFinished = false
+	$scope.customFile = null
+
+	$scope.validateFile =  (fileName) ->
+		allowedExtensions = ["jpg",'jpeg', "png"]
+		fileExtension = fileName.split('.').pop()
+		return true for extension in allowedExtensions when extension is fileExtension
+		return false
+
+	$scope.$on 'fileSelected', (event, args) ->
+		$scope.$apply () ->
+			console.log args.files
+			if $scope.validateFile(args.files[0].name)
+				$scope.customFile = args.files[0]
+				$scope.uploadFile()
+
+	$scope.uploadFile = () ->
+		file = $scope.customFile
+		if file
+			formData = new FormData()
+			formData.append 'file', file
+			$http.post('/product/saveTempImage', formData, {
+				transformRequest: angular.identity
+				headers: {'Content-type': undefined}
+			})
+			.success (data) ->
+				$scope.images = [data]
+				$scope.product.croppedImage = null
+				$scope.product.selectedImage = data
+				$scope.product.selectedImage.ourSrc = data.src
+				$scope.customFile = null
+			.error () ->
+				$scope.customFile = null
+				alert('Bohužel se nám nepodařilo zpracovat nahrané foto, zkuste to prosím znovu.');
 
 	$scope.finishCropping = () ->
 		$scope.croppFinished = true

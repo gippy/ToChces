@@ -296,7 +296,6 @@ app.factory 'cropHost', [
 				return
 
 			@setAreaType = (type) ->
-				console.log type
 				curSize = theArea.getSize()
 				curMinSize = theArea.getMinSize()
 				curX = theArea.getX()

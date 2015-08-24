@@ -16,6 +16,9 @@
     <script src="{! asset('/js/jquery.js') !}"></script>
     <script src="{! asset('/js/angular.js') !}"></script>
     <script src="{! asset('/js/ng-tags-input.min.js') !}"></script>
+    <script src="{! asset('/js/images-loaded.js') !}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/masonry/3.3.2/masonry.pkgd.min.js"></script>
+    <script src="{! asset('/js/angular-masonry.js') !}"></script>
     <script src="{! asset('/js/all.js') !}"></script>
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->

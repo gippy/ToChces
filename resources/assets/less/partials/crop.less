@@ -35,3 +35,52 @@
 	border: 1px solid @accent_color;
   }
 }
+
+.crop-options {
+  width: 454px;
+  margin: auto;
+  &:after {
+	content:"";
+	display:table;
+	clear:both;
+  }
+  .crop-type {
+	box-sizing: border-box;
+    display: block;
+    float: left;
+	width: 33%;
+	background-color: white;
+	color: @accent_color;
+	border: none;
+	border-top: 2px solid @accent_color;
+  }
+  .landscape {
+	border-left: 2px solid @accent_color;
+  }
+  .square {
+	width: 34%;
+	border-right: 2px solid @accent_color;
+	border-left: 2px solid @accent_color;
+  }
+  .portrait {
+	border-right: 2px solid @accent_color;
+  }
+  &.landscape {
+	.landscape {
+	  background-color:@accent_color;
+	  color: white;
+	}
+  }
+  &.square {
+	.square {
+	  background-color:@accent_color;
+	  color: white;
+	}
+  }
+  &.portrait {
+	.portrait {
+	  background-color:@accent_color;
+	  color: white;
+	}
+  }
+}

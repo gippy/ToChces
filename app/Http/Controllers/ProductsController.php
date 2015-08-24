@@ -241,4 +241,27 @@ class ProductsController extends Controller {
 		else return $this->productRepository->all($categories, $page);
 	}
 
+	public function saveTemp(){
+		$file = Request::file('file');
+		if ($file->isValid()) {
+			$size = $file->getClientSize();
+			$extension = $file->getClientOriginalExtension();
+			$type = $file->getMimeType();
+			$name = $file->getClientOriginalName();
+			$newName = hash('sha256', $name . time()) . '.' . $extension;
+			$file->move(storage_path('app'), $newName);
+
+			return Response::json([
+				'size' => $size,
+				'extension' => $extension,
+				'contentType' => $type,
+				'name' => $name,
+				'src' => '/download/' . $newName,
+				'type' => 'square'
+			]);
+		} else {
+			abort('403');
+		}
+	}
+
 }

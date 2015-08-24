@@ -284,7 +284,6 @@ app.factory('cropHost', [
       };
       this.setAreaType = function(type) {
         var AreaClass, curMinSize, curSize, curX, curY;
-        console.log(type);
         curSize = theArea.getSize();
         curMinSize = theArea.getMinSize();
         curX = theArea.getX();
