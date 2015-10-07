@@ -1,5 +1,11 @@
 @extends('../app')
 
+@section('message')
+    <div class="message">
+        Věci, které chcete, jednoduše přetáhněte do svých seznamů, nebo si vytvořte vlastní.
+    </div>
+@endsection
+
 @section('content')
     <div class="narrow pad-t-l profile">
         <div class="user mrg-b-m">

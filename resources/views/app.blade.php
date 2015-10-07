@@ -32,14 +32,16 @@
 
     <nav ng-controller="NavigationController" ng-class="'navigation' + ' ' + scrollClass">
         <div scroll-over limit=50 on-change="scrollChanged()" >
+
             <ul class="center-text">
-                <li><a ng-click="showCategories()">Kategorie</a></li>
-                <li class="logo"><a href="/"><img src="{! URL::asset('images/logo.png') !}" width="115" height="100" alt="To Chcete"/></a></li>
                 @if (Auth::guest())
-                    <li><a ng-click="showSignIn()">Přihlášení</a></li>
+                    <li class="double"><a ng-click="showSignIn()">Přihlášení</a></li>
                 @else
+                    <li><a href="{! URL::route('addProduct') !}">Přidat věc</a></li>
                     <li><a href="{! URL::route('profile') !}">Profil</a></li>
                 @endif
+                <li class="logo"><a href="/"><img src="{! URL::asset('images/logo.png') !}" width="115" height="100" alt="To Chcete"/></a></li>
+                <li><a ng-click="showCategories()">Kategorie</a></li>
                 <li class="search">
                     <form method="GET" action="/home">
                         <input type="text" name="search" onchange="this.form.submit()" value="{! Input::get('search', '') !}" />
@@ -49,6 +51,8 @@
             </ul>
         </div>
     </nav>
+
+    @yield('message')
 
     <div class="page" ng-controller="PageController">
         <div class="content">

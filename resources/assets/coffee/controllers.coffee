@@ -99,6 +99,7 @@ app.controller 'ModalController', ['$scope', '$http', '$sce', ($scope, $http, $s
 ]
 
 app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $http, $sce)->
+	$scope.step = 1;
 	$scope.url = ''
 	$scope.product = {
 		name: ''
@@ -138,12 +139,14 @@ app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $htt
 				$scope.product.selectedImage = data
 				$scope.product.selectedImage.ourSrc = data.src
 				$scope.customFile = null
+				$scope.step = 3
 			.error () ->
 				$scope.customFile = null
 				alert('Bohužel se nám nepodařilo zpracovat nahrané foto, zkuste to prosím znovu.');
 
 	$scope.finishCropping = () ->
 		$scope.croppFinished = true
+		$scope.step = 4
 		$scope.product.finalSrc = $scope.product.croppedImage
 
 	$scope.sizeAndType = (image) ->
@@ -157,8 +160,10 @@ app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $htt
 		$scope.product.croppedImage = ''
 		$http.get( '/products/getImage?url=' + encodeURIComponent(image.src) ).success (data) ->
 			$scope.product.selectedImage.ourSrc = data.src
+			$scope.step = 3
 
 	$scope.getProduct = () ->
+		$scope.loadingImages = true
 		$http.get( '/products/getInfo?url=' + encodeURIComponent($scope.url)  ).success (data) ->
 			$scope.product = {
 				name: data.title,
@@ -166,6 +171,8 @@ app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $htt
 			}
 			$scope.product.tags = []
 			$scope.product.categories = []
+			$scope.step = 2
+			$scope.loadingImages = false
 
 	$scope.submit = () ->
 		product =
@@ -196,9 +203,11 @@ app.controller 'ProductsController', ['$scope', '$http', '$sce', ($scope, $http)
 	dataUrl = '/products'
 
 	$scope.getNextPage = () ->
+		$scope.loadingImages = true
 		query = window.location.search.substring(1)
 		$http.get(dataUrl + (if page then '?page='+page else '?' ) + query).success (data) ->
 			$scope.products = $scope.products.concat(data.products)
+			$scope.loadingImages = false
 
 	$scope.init = () ->
 		path = window.location.pathname;

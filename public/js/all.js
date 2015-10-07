@@ -361,6 +361,7 @@ app.controller('ModalController', [
 
 app.controller('AddProductController', [
   '$scope', '$http', '$sce', function($scope, $http, $sce) {
+    $scope.step = 1;
     $scope.url = '';
     $scope.product = {
       name: '',
@@ -408,7 +409,8 @@ app.controller('AddProductController', [
           $scope.product.croppedImage = null;
           $scope.product.selectedImage = data;
           $scope.product.selectedImage.ourSrc = data.src;
-          return $scope.customFile = null;
+          $scope.customFile = null;
+          return $scope.step = 3;
         }).error(function() {
           $scope.customFile = null;
           return alert('Bohužel se nám nepodařilo zpracovat nahrané foto, zkuste to prosím znovu.');
@@ -417,6 +419,7 @@ app.controller('AddProductController', [
     };
     $scope.finishCropping = function() {
       $scope.croppFinished = true;
+      $scope.step = 4;
       return $scope.product.finalSrc = $scope.product.croppedImage;
     };
     $scope.sizeAndType = function(image) {
@@ -432,17 +435,21 @@ app.controller('AddProductController', [
       $scope.product.selectedImage = image;
       $scope.product.croppedImage = '';
       return $http.get('/products/getImage?url=' + encodeURIComponent(image.src)).success(function(data) {
-        return $scope.product.selectedImage.ourSrc = data.src;
+        $scope.product.selectedImage.ourSrc = data.src;
+        return $scope.step = 3;
       });
     };
     $scope.getProduct = function() {
+      $scope.loadingImages = true;
       return $http.get('/products/getInfo?url=' + encodeURIComponent($scope.url)).success(function(data) {
         $scope.product = {
           name: data.title,
           images: data.images
         };
         $scope.product.tags = [];
-        return $scope.product.categories = [];
+        $scope.product.categories = [];
+        $scope.step = 2;
+        return $scope.loadingImages = false;
       });
     };
     return $scope.submit = function() {
@@ -489,9 +496,11 @@ app.controller('ProductsController', [
     dataUrl = '/products';
     $scope.getNextPage = function() {
       var query;
+      $scope.loadingImages = true;
       query = window.location.search.substring(1);
       return $http.get(dataUrl + (page ? '?page=' + page : '?') + query).success(function(data) {
-        return $scope.products = $scope.products.concat(data.products);
+        $scope.products = $scope.products.concat(data.products);
+        return $scope.loadingImages = false;
       });
     };
     $scope.init = function() {

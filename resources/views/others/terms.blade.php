@@ -1,5 +1,9 @@
 @extends('../app')
 
+@section('message')
+    <div class="message empty"></div>
+@endsection
+
 @section('content')
     <div class="terms narrow">
         <p class="pad-t-m">Brouzdáš si internetem a zaujala Tě nějaká věc nebo služba? Je to přesně TO co CHCETE? Našel jsi na internetu ideální dárek pro někoho ve Tvém okolí? Nebo je tady parádní věc, kterou chceš mít? Vytvoř si vlastní „wish-list“ věcí a služeb na ToChcete.cz!</p>

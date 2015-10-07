@@ -1,5 +1,8 @@
-<?php namespace Laravel\Socialite\Two;
+<?php
 
+namespace Laravel\Socialite\Two;
+
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -27,13 +30,20 @@ abstract class AbstractProvider implements ProviderContract
      * @var string
      */
     protected $clientSecret;
-    
+
     /**
      * The redirect URL.
      *
      * @var string
      */
     protected $redirectUrl;
+
+    /**
+     * The custom parameters to be sent with the request.
+     *
+     * @var array
+     */
+    protected $parameters = [];
 
     /**
      * The scopes being requested.
@@ -121,9 +131,7 @@ abstract class AbstractProvider implements ProviderContract
         $state = null;
 
         if ($this->usesState()) {
-            $this->request->getSession()->set(
-                'state', $state = sha1(time().$this->request->getSession()->get('_token'))
-            );
+            $this->request->getSession()->set('state', $state = Str::random(40));
         }
 
         return new RedirectResponse($this->getAuthUrl($state));
@@ -159,7 +167,7 @@ abstract class AbstractProvider implements ProviderContract
             $fields['state'] = $state;
         }
 
-        return $fields;
+        return array_merge($fields, $this->parameters);
     }
 
     /**
@@ -201,9 +209,9 @@ abstract class AbstractProvider implements ProviderContract
             return false;
         }
 
-        $session = $this->request->getSession();
+        $state = $this->request->getSession()->pull('state');
 
-        return ! ($this->request->input('state') === $session->get('state'));
+        return ! (strlen($state) > 0 && $this->request->input('state') === $state);
     }
 
     /**
@@ -234,7 +242,7 @@ abstract class AbstractProvider implements ProviderContract
     {
         return [
             'client_id' => $this->clientId, 'client_secret' => $this->clientSecret,
-            'code' => $code, 'redirect_uri' => $this->redirectUrl
+            'code' => $code, 'redirect_uri' => $this->redirectUrl,
         ];
     }
 
@@ -323,6 +331,19 @@ abstract class AbstractProvider implements ProviderContract
     public function stateless()
     {
         $this->stateless = true;
+
+        return $this;
+    }
+
+    /**
+     * Set the custom parameters of the request.
+     *
+     * @param  array  $parameters
+     * @return $this
+     */
+    public function with(array $parameters)
+    {
+        $this->parameters = $parameters;
 
         return $this;
     }
