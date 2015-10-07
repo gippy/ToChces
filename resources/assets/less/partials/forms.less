@@ -44,14 +44,18 @@ input.small[type="checkbox"] + label span {
   margin:-1px 2px 0 0;
   vertical-align:middle;
   border: 2px solid @accent_color;
-  cursor:pointer;
+  cursor: pointer;
 }
 input.small[type="checkbox"]:checked + label span {
-  background:url("/images/x-small.png") 0px 0px no-repeat;
+  background:url("/images/x-small.png") -1px -1px no-repeat;
 }
 
-input.filled[type="checkbox"] {
+input.small.filled[type="checkbox"] + label span {
   background-color: white;
+}
+
+input.small.filled[type="checkbox"]:checked + label span {
+  background:white url("/images/x-small.png") -1px -1px no-repeat;
 }
 
 input[type="text"], input[type="email"], input[type="password"], textarea {

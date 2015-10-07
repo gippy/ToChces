@@ -94,9 +94,9 @@
                         <label for="category_{{category.id}}"><span></span> {{category.name}}</label>
                     </div>
                 </div>
-                <div class="mrg-b-m">
+                <div class="clearfix mrg-t-m">
                     <div class="form-checkbox half">
-                        <input type="checkbox" class="small" for="truthful" ng-model="product.truthful" />
+                        <input type="checkbox" class="small filled" id="truthful" ng-model="product.truthful" />
                         <label for="truthful"><span></span> údaje jsou pravdivé</label>
                     </div>
                     <button type="button" style="float:right;" ng-click="submit()"  ng-show="product.name && product.vendor && product.price && product.truthful">Přidat</button>
