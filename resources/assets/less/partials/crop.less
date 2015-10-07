@@ -2,8 +2,8 @@
   width: 450px;
   height: 450px;
   border: 2px solid @accent_color;
-  background-color: white;
-  margin: auto;
+  background-color: #594A42;
+  margin: auto auto 15px auto;
   &.landscape {
 
   }
@@ -37,50 +37,33 @@
 }
 
 .crop-options {
-  width: 454px;
-  margin: auto;
+  text-align: center;
+  margin-bottom: 15px;
   &:after {
 	content:"";
 	display:table;
 	clear:both;
   }
   .crop-type {
+	position: relative;
 	box-sizing: border-box;
-    display: block;
-    float: left;
-	width: 33%;
-	background-color: white;
-	color: @accent_color;
-	border: none;
-	border-top: 2px solid @accent_color;
-  }
-  .landscape {
-	border-left: 2px solid @accent_color;
-  }
-  .square {
-	width: 34%;
-	border-right: 2px solid @accent_color;
-	border-left: 2px solid @accent_color;
-  }
-  .portrait {
-	border-right: 2px solid @accent_color;
-  }
-  &.landscape {
-	.landscape {
-	  background-color:@accent_color;
-	  color: white;
+    display: inline-block;
+    height: 40px;
+	padding: 3px;
+	line-height: 34px;
+	font-size: 18px;
+	background-color: @accent_color;
+	color: white;
+	width: 190px;
+	text-align: center;
+	&:hover {
+	  background-color: @accent_color_active;
 	}
   }
-  &.square {
-	.square {
-	  background-color:@accent_color;
-	  color: white;
-	}
-  }
-  &.portrait {
-	.portrait {
-	  background-color:@accent_color;
-	  color: white;
-	}
+  img {
+	height: 34px;
+	position: absolute;
+	right: 3px;
+	top: 3px;
   }
 }

@@ -12,4 +12,7 @@
             <span class="price">{{product.price}},-</span>
         </div>
     </div>
+    <div style="text-align: center;" ng-show="loadingImages">
+        <img src="{! URL::asset('images/to-loader.gif') !}" style="height: 100px;" alt="loading data"/>
+    </div>
 </div>

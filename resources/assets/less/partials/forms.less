@@ -30,6 +30,29 @@ input[type="checkbox"] + label span {
 input[type="checkbox"]:checked + label span {
   background:url("/images/x.png") 0px 0px no-repeat;
 }
+input.small[type="checkbox"] + label {
+  line-height: 22px;
+  vertical-align:middle;
+  font-size: 18px;
+  color: @accent_color;
+}
+input.small[type="checkbox"] + label span {
+  display:inline-block;
+  box-sizing: border-box;
+  width:18px;
+  height:18px;
+  margin:-1px 2px 0 0;
+  vertical-align:middle;
+  border: 2px solid @accent_color;
+  cursor:pointer;
+}
+input.small[type="checkbox"]:checked + label span {
+  background:url("/images/x-small.png") 0px 0px no-repeat;
+}
+
+input.filled[type="checkbox"] {
+  background-color: white;
+}
 
 input[type="text"], input[type="email"], input[type="password"], textarea {
   box-sizing: border-box;
@@ -122,6 +145,18 @@ label {
 }
 
 input.ng-invalid {
-  border-bottom-color: darkred!important;
-  border-right-color: darkred!important;
+}
+
+.add-product-form {
+  label {
+    font-size: 18px;
+    line-height: 21px;
+  }
+  input {
+    box-sizing: border-box;
+    height: 28px;
+    font-size: 14px;
+    line-height: 18px;
+    padding: 4px;
+  }
 }

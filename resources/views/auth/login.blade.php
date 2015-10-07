@@ -1,5 +1,9 @@
 @extends('app')
 
+@section('message')
+	<div class="message empty"></div>
+@endsection
+
 @section('content')
 <div class="container-fluid">
 	<div class="row">

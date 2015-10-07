@@ -42,15 +42,15 @@ a.btn, a.btn:hover, a.btn:active, a.btn:visited{
   overflow: hidden;
   text-align: center;
   width: 200px;
-  border: 1px solid @accent_color;
-  border-radius: 5px;
   cursor: pointer;
-  background-color: white;
-  font-size: 0.8em;
+  background-color: #0569a8;
+  color: white;
   vertical-align: bottom;
+  font-size: @baseline;
+  padding: 0.5em 0;
 
-  i {
-	font-size: 0.8em;
+  &:hover {
+	background-color: lighten(#0569a8, 0.2%);
   }
 
   input[type=file] {

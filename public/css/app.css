@@ -422,7 +422,7 @@ a:visited {
 }
 .navigation ul li:not(.logo) {
   margin-top: 9px;
-  padding: 0 45px;
+  width: 205px;
 }
 .navigation ul a {
   color: #35a8e0;
@@ -432,6 +432,12 @@ a:visited {
   text-decoration: none;
   cursor: pointer;
 }
+.navigation ul li.double {
+  width: 410px;
+  box-sizing: border-box;
+  padding-right: 40px;
+  text-align: right;
+}
 .logo img {
   width: 115px;
   height: 100px;
@@ -440,7 +446,7 @@ a:visited {
   transition: all 400ms;
 }
 .navigation.scrolling {
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.65);
 }
 .navigation.scrolling .logo img {
   height: 42px;
@@ -448,10 +454,6 @@ a:visited {
   background: transparent;
 }
 .search {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 200px;
   height: 100%;
 }
 .search input[type="text"] {
@@ -478,9 +480,44 @@ body.has-modal .navigation {
   -ms-filter: blur(5px);
   filter: blur(5px);
 }
+.steps {
+  text-align: center;
+  margin-bottom: 50px;
+}
+.steps .status {
+  margin-bottom: 25px;
+  font-size: 18px;
+  color: #35a8e0;
+}
+.steps .step-dash {
+  height: 30px;
+  width: auto;
+}
+.steps .step-dot {
+  height: 30px;
+  width: auto;
+}
+.steps .step-dot.active {
+  cursor: pointer;
+}
+.message {
+  width: 590px;
+  margin: 42px auto 0 auto;
+  padding: 100px 40px 40px 40px;
+  font-size: 18px;
+  color: #35a8e0;
+  background-color: rgba(255, 255, 255, 0.3);
+  text-align: center;
+  line-height: 22px;
+}
+.message.empty {
+  padding: 0;
+  margin-top: 100px;
+  height: 0;
+}
 .page {
   width: 960px;
-  margin: 100px auto 0;
+  margin: auto;
   position: relative;
 }
 body.has-modal .page {
@@ -595,6 +632,28 @@ input[type="checkbox"] + label span {
 input[type="checkbox"]:checked + label span {
   background: url("/images/x.png") 0px 0px no-repeat;
 }
+input.small[type="checkbox"] + label {
+  line-height: 22px;
+  vertical-align: middle;
+  font-size: 18px;
+  color: #35a8e0;
+}
+input.small[type="checkbox"] + label span {
+  display: inline-block;
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  margin: -1px 2px 0 0;
+  vertical-align: middle;
+  border: 2px solid #35a8e0;
+  cursor: pointer;
+}
+input.small[type="checkbox"]:checked + label span {
+  background: url("/images/x-small.png") 0px 0px no-repeat;
+}
+input.filled[type="checkbox"] {
+  background-color: white;
+}
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -681,9 +740,16 @@ label {
   background-color: #35a8e0;
   color: white;
 }
-input.ng-invalid {
-  border-bottom-color: darkred!important;
-  border-right-color: darkred!important;
+.add-product-form label {
+  font-size: 18px;
+  line-height: 21px;
+}
+.add-product-form input {
+  box-sizing: border-box;
+  height: 28px;
+  font-size: 14px;
+  line-height: 18px;
+  padding: 4px;
 }
 button,
 .btn {
@@ -728,15 +794,15 @@ a.btn:visited {
   overflow: hidden;
   text-align: center;
   width: 200px;
-  border: 1px solid #35a8e0;
-  border-radius: 5px;
   cursor: pointer;
-  background-color: white;
-  font-size: 0.8em;
+  background-color: #0569a8;
+  color: white;
   vertical-align: bottom;
+  font-size: 20px;
+  padding: 0.5em 0;
 }
-.btn-file i {
-  font-size: 0.8em;
+.btn-file:hover {
+  background-color: #056aa9;
 }
 .btn-file input[type=file] {
   position: absolute;
@@ -1020,6 +1086,8 @@ img.product-image.hidden {
   display: block;
   float: left;
   text-align: center;
+  min-height: 193px;
+  min-width: 193px;
   max-width: 584px;
   max-height: 584px;
 }
@@ -1038,16 +1106,21 @@ img.product-image.hidden {
   width: 286px;
   height: auto;
 }
+.select-image .slide.file {
+  width: 286px;
+  height: 193px;
+}
 .select-image .slide img {
-  border: 1px solid #35a8e0;
+  border: 2px solid #35a8e0;
   cursor: pointer;
   max-width: 100%;
   max-height: 100%;
   width: auto;
   height: auto;
+  background-color: white;
 }
 .select-image .slide img:hover {
-  border: 1px solid #4bb2e3;
+  border: 2px solid #4bb2e3;
 }
 .selected-image .h2 {
   text-align: center;
@@ -1056,8 +1129,8 @@ img.product-image.hidden {
   width: 450px;
   height: 450px;
   border: 2px solid #35a8e0;
-  background-color: white;
-  margin: auto;
+  background-color: #594A42;
+  margin: auto auto 15px auto;
 }
 .crop {
   width: 100%;
@@ -1082,8 +1155,8 @@ img.product-image.hidden {
   border: 1px solid #35a8e0;
 }
 .crop-options {
-  width: 454px;
-  margin: auto;
+  text-align: center;
+  margin-bottom: 15px;
 }
 .crop-options:after {
   content: "";
@@ -1091,37 +1164,26 @@ img.product-image.hidden {
   clear: both;
 }
 .crop-options .crop-type {
+  position: relative;
   box-sizing: border-box;
-  display: block;
-  float: left;
-  width: 33%;
-  background-color: white;
-  color: #35a8e0;
-  border: none;
-  border-top: 2px solid #35a8e0;
-}
-.crop-options .landscape {
-  border-left: 2px solid #35a8e0;
-}
-.crop-options .square {
-  width: 34%;
-  border-right: 2px solid #35a8e0;
-  border-left: 2px solid #35a8e0;
-}
-.crop-options .portrait {
-  border-right: 2px solid #35a8e0;
-}
-.crop-options.landscape .landscape {
+  display: inline-block;
+  height: 40px;
+  padding: 3px;
+  line-height: 34px;
+  font-size: 18px;
   background-color: #35a8e0;
   color: white;
+  width: 190px;
+  text-align: center;
 }
-.crop-options.square .square {
-  background-color: #35a8e0;
-  color: white;
+.crop-options .crop-type:hover {
+  background-color: #1e8ec4;
 }
-.crop-options.portrait .portrait {
-  background-color: #35a8e0;
-  color: white;
+.crop-options img {
+  height: 34px;
+  position: absolute;
+  right: 3px;
+  top: 3px;
 }
 tags-input {
   display: block;

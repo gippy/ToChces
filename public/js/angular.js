@@ -18030,7 +18030,7 @@ var htmlAnchorDirective = valueFn({
 
 /**
  * @ngdoc directive
- * @name ngSrc
+ * class="step-dot" ng-class="step >= 1 ? 'active' : ''"@name ngSrc
  * @restrict A
  * @priority 99
  *

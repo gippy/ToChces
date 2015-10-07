@@ -30,7 +30,7 @@
   }
   li:not(.logo) {
 	margin-top: 9px;
-	padding: 0 45px;
+	width:205px;
   }
   a {
 	color: @accent_color;
@@ -39,6 +39,12 @@
 	color: @accent_color_active;
 	text-decoration: none;
 	cursor: pointer;
+  }
+  li.double {
+	width: 410px;
+	box-sizing: border-box;
+	padding-right: 40px;
+	text-align: right;
   }
 }
 
@@ -53,7 +59,7 @@
 }
 
 .navigation.scrolling {
-  background-color: rgba(255,255,255,0.95);
+  background-color: rgba(255,255,255,0.65);
   .logo img {
 	height: 42px;
 	width: 48px;
@@ -62,10 +68,6 @@
 }
 
 .search {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 200px;
   height: 100%;
   input[type="text"] {
 	display: inline-block;
@@ -93,4 +95,25 @@ body.has-modal .navigation {
   -o-filter: blur(5px);
   -ms-filter: blur(5px);
   filter: blur(5px);
+}
+
+.steps {
+  text-align: center;
+  margin-bottom: 50px;
+  .status {
+    margin-bottom: 25px;
+    font-size: 18px;
+    color: @accent_color;
+  }
+  .step-dash {
+    height: 30px;
+    width: auto;
+  }
+  .step-dot {
+    height: 30px;
+    width: auto;
+    &.active {
+      cursor: pointer;
+    }
+  }
 }
