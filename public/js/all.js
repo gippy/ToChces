@@ -685,22 +685,28 @@ app.controller('ProductsController', [
       return classes.join(' ');
     };
     $scope.iWantThis = function(product, $event) {
-      return $http.get('/product/' + product.id + '/like').success(function() {
+      return $http.get('/product/' + product.id + '/like?ajax=1').success(function(data) {
+        product.color = data.color;
         return product.liked = true;
       });
     };
     $scope.iDontWantThis = function(product, $event) {
-      return $http.get('/product/' + product.id + '/dislike').success(function() {
-        return product.liked = product.owned = true;
+      return $http.get('/product/' + product.id + '/dislike?ajax=1').success(function() {
+        product.color = data.color;
+        product.liked = false;
+        return product.owned = false;
       });
     };
     $scope.iHaveThis = function(product, $event) {
-      return $http.get('/product/' + product.id + '/own').success(function() {
-        return product.owned = product.liked = true;
+      return $http.get('/product/' + product.id + '/own?ajax=1').success(function() {
+        product.color = data.color;
+        product.liked = true;
+        return product.owned = true;
       });
     };
     $scope.iDontHaveThis = function(product, $event) {
-      return $http.get('/product/' + product.id + '/disown').success(function() {
+      return $http.get('/product/' + product.id + '/disown?ajax=1').success(function() {
+        product.color = data.color;
         return product.owned = false;
       });
     };
@@ -719,7 +725,7 @@ app.controller('ProductsController', [
         ref = $scope.products;
         for (key = i = 0, len = ref.length; i < len; key = ++i) {
           oldProduct = ref[key];
-          if (oldProduct.id = product.id) {
+          if (oldProduct.id === product.id) {
             pos = key;
           }
         }

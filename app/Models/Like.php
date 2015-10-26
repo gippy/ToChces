@@ -42,24 +42,10 @@ class Like extends Model {
 		return $this->belongsTo('ToChces\Models\Box');
 	}
 
-	protected $primaryKey = ['user_id', 'product_id'];
+	protected $appends = ['color'];
 
-	/**
-	 * Set the keys for a save update query.
-	 * This is a fix for tables with composite keys
-	 * TODO: Investigate this later on
-	 *
-	 * @param  \Illuminate\Database\Eloquent\Builder  $query
-	 * @return \Illuminate\Database\Eloquent\Builder
-	 */
-	protected function setKeysForSaveQuery(\Illuminate\Database\Eloquent\Builder $query) {
-		if (is_array($this->primaryKey)) {
-			foreach ($this->primaryKey as $pk) {
-				$query->where($pk, '=', $this->original[$pk]);
-			}
-			return $query;
-		}else{
-			return parent::setKeysForSaveQuery($query);
-		}
+	public function getColorAttribute(){
+		$box = $this->box;
+		return $box != null ? $box->color : '';
 	}
 }

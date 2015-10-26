@@ -14,9 +14,6 @@
             <p class="description">{! $product->description !}</p>
             <p class="price">{! $product->price !} Kč</p>
             <p class="icons">
-                @if(!$product->getOwnedAttribute())
-                    <a href="/product/{! $product->id !}/own" title="To mám"><img class="tomam icon" src="{! URL::asset('images/to-mam.png')!}" alt="To mám"/></a>
-                @endif
                 @if(!$product->getLikedAttribute())
                     <a href="/product/{! $product->id !}/like" title="To chci"><img class="tochci icon" src="{! URL::asset('images/to-small.png')!}" alt="To chci"/></a>
                 @endif

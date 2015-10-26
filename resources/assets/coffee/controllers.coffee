@@ -345,13 +345,25 @@ app.controller 'ProductsController', ['$scope', '$http', '$sce', ($scope, $http)
 		return classes.join ' '
 
 	$scope.iWantThis = (product, $event) ->
-		$http.get('/product/'+product.id+'/like').success () -> product.liked = true
+		$http.get('/product/'+product.id+'/like?ajax=1').success (data) ->
+			product.color = data.color
+			product.liked = true
+
 	$scope.iDontWantThis = (product, $event) ->
-		$http.get('/product/'+product.id+'/dislike').success () -> product.liked = product.owned = true
+		$http.get('/product/'+product.id+'/dislike?ajax=1').success () ->
+			product.color = data.color
+			product.liked = false
+			product.owned = false
+
 	$scope.iHaveThis = (product, $event) ->
-		$http.get('/product/'+product.id+'/own').success () -> product.owned = product.liked = true
+		$http.get('/product/'+product.id+'/own?ajax=1').success () ->
+			product.color = data.color
+			product.liked = true
+			product.owned = true
 	$scope.iDontHaveThis = (product, $event) ->
-		$http.get('/product/'+product.id+'/disown').success () -> product.owned = false
+		$http.get('/product/'+product.id+'/disown?ajax=1').success () ->
+			product.color = data.color
+			product.owned = false
 
 	$scope.$on "scrolledToBottom", () ->
 		if page != 0 then $scope.getNextPage()
@@ -361,7 +373,7 @@ app.controller 'ProductsController', ['$scope', '$http', '$sce', ($scope, $http)
 		box = data.drop
 		$http.get('/product/'+dragProduct.id+'/toBox?box='+box.id).success (product) ->
 			pos = -1
-			pos = key for oldProduct, key in $scope.products when oldProduct.id = product.id
+			pos = key for oldProduct, key in $scope.products when oldProduct.id is product.id
 			if key != -1 then	$scope.products[pos] = product
 			else $scope.products.push product
 

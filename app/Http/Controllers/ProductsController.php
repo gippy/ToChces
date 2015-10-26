@@ -154,7 +154,8 @@ class ProductsController extends Controller {
 	public function like(Product $product){
 		$like = $this->likeRepository->createOrUpdate([
 			'product_id' => $product->id,
-			'user_id' => Auth::user()->id
+			'user_id' => Auth::user()->id,
+			'box_id' => 1
 		]);
 		return $this->handleLikeChange($like);
 	}
@@ -177,13 +178,13 @@ class ProductsController extends Controller {
 		$like = $this->likeRepository->createOrUpdate([
 			'product_id' => $product->id,
 			'user_id' => Auth::user()->id,
-			'box' => 1
+			'box_id' => 1
 		]);
 		return $this->handleLikeChange($like);
 	}
 
 	protected function handleLikeChange($like = null){
-		if (Request::ajax()) return response()->json(['status' => 'success']);
+		if (Input::query('ajax')) return response()->json($like);
 		else return back();
 	}
 

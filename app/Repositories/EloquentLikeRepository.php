@@ -28,6 +28,10 @@ class EloquentLikeRepository implements LikeRepository
 			$like->box_id = $input['box_id'];
 			$like->save();
 		} else if ($like) {
+			if (!$like->box_id) {
+				$like->box_id = 1;
+				$like->save();
+			}
 			return $like;
 		} else {
 			$like = Like::create($input);
