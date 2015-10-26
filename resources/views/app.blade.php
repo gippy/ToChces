@@ -28,11 +28,10 @@
 		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
 </head>
-<body class="proxima" ng-app="ToChcete" ng-controller="BodyController" ng-class="isModalVisible() ? 'has-modal' : ''">
+<body class="proxima" ng-app="ToChcete" ng-controller="BodyController" ng-class="isModalVisible() ? 'has-modal' : ''" scroll-over>
 
     <nav ng-controller="NavigationController" ng-class="'navigation' + ' ' + scrollClass">
-        <div scroll-over limit=50 on-change="scrollChanged()" >
-
+        <div>
             <ul class="center-text">
                 @if (Auth::guest())
                     <li class="double"><a ng-click="showSignIn()">Přihlášení</a></li>

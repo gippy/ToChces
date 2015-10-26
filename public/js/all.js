@@ -273,23 +273,36 @@ app.controller('NavigationController', [
     $scope.showProfile = function() {
       return $scope.$parent.showModal('profile');
     };
+    $scope.$on("reachedMenuLimit", function(event, data) {
+      if (data.type === "over") {
+        return $scope.scrollClass = 'scrolling';
+      } else {
+        return $scope.scrollClass = '';
+      }
+    });
     $scope.scrollClass = '';
-    $scope.scrollChanged = function() {
-      return $scope.scrollClass = $scope.scrollClass ? '' : 'scrolling';
-    };
     return $scope.$parent.navigationController = $scope;
   }
 ]);
 
 app.controller('PageController', [
   '$scope', '$http', function($scope, $http) {
-    return $scope.$parent.pageController = $scope;
+    $scope.$parent.pageController = $scope;
+    return $scope.draggableProducts = {
+      drop: function(draggedItem, dropedItem) {
+        return $scope.$broadcast("drop", {
+          drag: draggedItem,
+          drop: dropedItem
+        });
+      }
+    };
   }
 ]);
 
 app.controller('ModalController', [
   '$scope', '$http', '$sce', function($scope, $http, $sce) {
     var getModal;
+    $scope.stack = [];
     $scope.visible = false;
     $scope.content = '';
     $scope.type = '';
@@ -336,6 +349,146 @@ app.controller('ModalController', [
         }
       }
     };
+    $scope.box = {
+      id: null,
+      name: null,
+      color: 'red',
+      remove: false,
+      removeContents: false,
+      callback: null,
+      confirmMessage: null,
+      confirmCb: null,
+      init: function(cb, box) {
+        $scope.box.callback = cb;
+        if (box) {
+          $scope.box.id = box.id;
+          $scope.box.name = box.name;
+          $scope.box.color = box.color;
+          return $scope.box.remove = $scope.box.removeContents = false;
+        }
+      },
+      save: function() {
+        if ($scope.box.remove) {
+          $scope.box.confirmMessage = 'Opravdu chcete smazat tento seznam?';
+          return $scope.box.confirmCb = function() {
+            if ($scope.box.callback) {
+              return $scope.box.callback($scope.box);
+            }
+          };
+        } else if ($scope.box.removeContents) {
+          $scope.box.confirmMessage = 'Opravdu chcete smazat obsah tohoto seznamu?';
+          return $scope.box.confirmCb = function() {
+            if ($scope.box.callback) {
+              return $scope.box.callback($scope.box);
+            }
+          };
+        } else if ($scope.box.callback) {
+          return $scope.box.callback($scope.box);
+        }
+      },
+      confirm: function() {
+        $scope.box.confirmCb();
+        return $scope.box.cleanConfirmation();
+      },
+      cleanConfirmation: function() {
+        $scope.box.confirmMessage = null;
+        return $scope.box.confirmCb = null;
+      }
+    };
+    $scope.boxes = {
+      boxes: null,
+      callback: null,
+      mergeCb: null,
+      removeCb: null,
+      removeContentsCb: null,
+      confirmMessage: '',
+      confirmCb: null,
+      mergeFrom: null,
+      mergeTo: null,
+      init: function(cb, boxes) {
+        $scope.boxes.callback = cb;
+        return $scope.boxes.boxes = boxes;
+      },
+      showEdit: function(box) {
+        $scope.box.init($scope.boxes.edit, box);
+        return $scope.open('edit-box');
+      },
+      edit: function(box) {
+        if (box.remove) {
+          $scope.boxes.remove(box);
+        } else {
+          $http.post('/boxes/update', box).success(function(box) {
+            var existingBox, i, key, len, position, ref;
+            position = -1;
+            ref = $scope.boxes.boxes;
+            for (key = i = 0, len = ref.length; i < len; key = ++i) {
+              existingBox = ref[key];
+              if (box.id === existingBox.id) {
+                position = key;
+              }
+            }
+            if (position !== -1) {
+              $scope.boxes.boxes[position].name = box.name;
+              $scope.boxes.boxes[position].color = box.color;
+            }
+            if ($scope.boxes.callback) {
+              return $scope.boxes.callback($scope.boxes.boxes);
+            }
+          });
+        }
+        if (box.removeContents) {
+          $scope.boxes.removeContents(box);
+        }
+        return $scope.close();
+      },
+      merge: function(from, to) {
+        return $scope.$apply(function() {
+          $scope.boxes.confirmMessage = 'Opravdu chcete sloucit obsah z "' + from.name + '" do "' + to.name + '"?';
+          $scope.boxes.mergeFrom = from;
+          $scope.boxes.mergeTo = to;
+          return $scope.boxes.confirmCb = function() {
+            return $http.get('/boxes/merge?from=' + $scope.boxes.mergeFrom.id + '&to=' + $scope.boxes.mergeTo.id).success(function(data) {
+              return window.location.reload();
+            });
+          };
+        });
+      },
+      remove: function(box) {
+        return $http.get('/boxes/remove?box=' + box.id).success(function() {
+          return window.location.reload();
+        });
+      },
+      removeLocalBox: function(box) {
+        var i, item, key, len, position, ref;
+        position = -1;
+        ref = $scope.boxes;
+        for (key = i = 0, len = ref.length; i < len; key = ++i) {
+          item = ref[key];
+          if (item.id === box.id) {
+            position = key;
+          }
+        }
+        if (position !== -1) {
+          return $scope.boxes.splice(position, 1);
+        }
+      },
+      removeContents: function(box) {
+        return $http.get('/boxes/removeContents?box=' + box.id).success(function() {
+          return window.location.reload();
+        });
+      },
+      confirm: function() {
+        $scope.boxes.confirmCb();
+        return $scope.boxes.cleanConfirmation();
+      },
+      cleanConfirmation: function() {
+        $scope.boxes.confirmMessage = '';
+        return $scope.boxes.confirmCb = null;
+      },
+      drop: function(from, to) {
+        return $scope.boxes.merge(from, to);
+      }
+    };
     getModal = function(type, cb) {
       $scope.url = '/modal/' + type;
       return cb();
@@ -344,12 +497,15 @@ app.controller('ModalController', [
       return $scope.visible;
     };
     $scope.close = function() {
-      return $scope.visible = false;
+      $scope.stack.pop();
+      if ($scope.stack.length) {
+        return $scope.open($scope.stack.pop());
+      } else {
+        return $scope.visible = false;
+      }
     };
     $scope.open = function(type) {
-      if ($scope.visible) {
-        $scope.close();
-      }
+      $scope.stack.push(type);
       return getModal(type, function() {
         $scope.type = type;
         return $scope.visible = true;
@@ -500,7 +656,8 @@ app.controller('ProductsController', [
       query = window.location.search.substring(1);
       return $http.get(dataUrl + (page ? '?page=' + page : '?') + query).success(function(data) {
         $scope.products = $scope.products.concat(data.products);
-        return $scope.loadingImages = false;
+        $scope.loadingImages = false;
+        return page++;
       });
     };
     $scope.init = function() {
@@ -520,6 +677,9 @@ app.controller('ProductsController', [
       }
       if (product.owned) {
         classes.push('owned');
+      }
+      if (product.color) {
+        classes.push('corner ' + product.color);
       }
       classes.push(product.layout);
       return classes.join(' ');
@@ -544,7 +704,69 @@ app.controller('ProductsController', [
         return product.owned = false;
       });
     };
+    $scope.$on("scrolledToBottom", function() {
+      if (page !== 0) {
+        return $scope.getNextPage();
+      }
+    });
+    $scope.$on("drop", function(event, data) {
+      var box, dragProduct;
+      dragProduct = data.drag;
+      box = data.drop;
+      return $http.get('/product/' + dragProduct.id + '/toBox?box=' + box.id).success(function(product) {
+        var i, key, len, oldProduct, pos, ref;
+        pos = -1;
+        ref = $scope.products;
+        for (key = i = 0, len = ref.length; i < len; key = ++i) {
+          oldProduct = ref[key];
+          if (oldProduct.id = product.id) {
+            pos = key;
+          }
+        }
+        if (key !== -1) {
+          return $scope.products[pos] = product;
+        } else {
+          return $scope.products.push(product);
+        }
+      });
+    });
     return $scope.init();
+  }
+]);
+
+app.controller('BoxesController', [
+  '$scope', '$http', function($scope, $http) {
+    $scope.boxes = [];
+    $http.get('/boxes').success(function(data) {
+      return $scope.boxes = data;
+    });
+    $scope.addBox = function() {
+      var $base;
+      $base = $scope.$parent.$parent;
+      $base.modalController.box.init(function(box) {
+        return $http.post('/boxes/create', box).success(function(box) {
+          $scope.boxes.push(box);
+          return $scope.modalController.close();
+        });
+      });
+      return $base.showModal('edit-box');
+    };
+    $scope.editBoxes = function() {
+      var $base;
+      $base = $scope.$parent.$parent;
+      $base.modalController.boxes.init(function(boxes) {
+        $scope.boxes = boxes;
+        return $scope.modalController.close();
+      }, $scope.boxes);
+      return $base.showModal('boxes');
+    };
+    return $scope.$on("reachedBoxesLimit", function(event, data) {
+      if (data.type === 'over') {
+        return $scope.scrollClass = 'scrolling';
+      } else {
+        return $scope.scrollClass = '';
+      }
+    });
   }
 ]);
 
@@ -702,37 +924,46 @@ app.directive('productImageOption', function() {
 app.directive('scrollOver', function($window, $document) {
   return {
     restrict: 'A',
-    scope: {
-      limit: '@',
-      onChange: '&'
-    },
     link: function(scope, element, attrs) {
-      var handler, lastPosition, timeout, windowElement;
-      scope.overScroll = false;
+      var bottomLimit, boxesLimit, handler, lastCurrPosition, lastPosition, menuLimit, windowElement;
       windowElement = angular.element($window);
-      timeout = null;
       lastPosition = null;
+      lastCurrPosition = null;
+      menuLimit = 50;
+      boxesLimit = 300;
+      bottomLimit = 50;
       handler = function() {
-        var currPosition, position;
+        var currPosition, limit, position;
         position = windowElement.scrollTop();
-        if (scope.overScroll && position < scope.limit) {
-          scope.overScroll = false;
-          scope.onChange();
-        } else if (!scope.overScroll && position > scope.limit) {
-          scope.overScroll = true;
-          scope.onChange();
+        if (position >= menuLimit && lastPosition < menuLimit) {
+          scope.$broadcast('reachedMenuLimit', {
+            type: "over",
+            position: position
+          });
+        } else if (position < menuLimit && lastPosition >= menuLimit) {
+          scope.$broadcast('reachedMenuLimit', {
+            type: "under",
+            position: position
+          });
         }
+        if (position >= boxesLimit && lastPosition < boxesLimit) {
+          scope.$broadcast('reachedBoxesLimit', {
+            type: "over",
+            position: position
+          });
+        } else if (position < boxesLimit && lastPosition >= boxesLimit) {
+          scope.$broadcast('reachedBoxesLimit', {
+            type: "under",
+            position: position
+          });
+        }
+        lastPosition = position;
         currPosition = position + windowElement.height();
-        if (currPosition > $document.height() - 50) {
-          if (currPosition > lastPosition) {
-            lastPosition = currPosition;
-            window.clearTimeout(timeout);
-            return timeout = window.setTimeout(function() {
-              scope.$emit("scrolledToBottom", {});
-              return console.log('bottom');
-            }, 1000);
-          }
+        limit = $document.height() - bottomLimit;
+        if (currPosition > limit && lastCurrPosition <= limit) {
+          scope.$broadcast("scrolledToBottom", {});
         }
+        return lastCurrPosition = currPosition;
       };
       windowElement.on('scroll', scope.$apply.bind(scope, handler));
       return handler();
@@ -752,6 +983,57 @@ app.directive('fileField', function() {
             files: files
           });
         }
+      });
+    }
+  };
+});
+
+app.directive('drag', function() {
+  return {
+    scope: {
+      topScope: "="
+    },
+    require: 'ngModel',
+    link: function(scope, element, attrs, model) {
+      element.attr('draggable', true);
+      element.bind('dragstart', function(event) {
+        event.originalEvent.dataTransfer.effectAllowed = "link";
+        return scope.topScope.dragModel = model;
+      });
+      return element.bind('dragend', function() {
+        if (!scope.topScope.droping) {
+          return scope.topScope.dragModel = null;
+        }
+      });
+    }
+  };
+});
+
+app.directive('drop', function() {
+  return {
+    scope: {
+      topScope: "="
+    },
+    require: 'ngModel',
+    link: function(scope, element, attrs, model) {
+      element.attr('draggable', true);
+      element.bind('dragover', function(event) {
+        return event.preventDefault();
+      });
+      element.bind('dragenter', function(event) {
+        event.preventDefault();
+        event.originalEvent.dataTransfer.dropEffect = "link";
+        return scope.topScope.dropModel = model;
+      });
+      element.bind('dragleave', function() {
+        return scope.topScope.dropModel = null;
+      });
+      return element.bind('drop', function() {
+        scope.topScope.droping = true;
+        scope.topScope.drop(scope.topScope.dragModel.$viewValue, scope.topScope.dropModel.$viewValue);
+        scope.topScope.dragModel = null;
+        scope.topScope.dropModel = null;
+        return scope.topScope.droping = false;
       });
     }
   };
@@ -1306,7 +1588,7 @@ app.service('cropEXIF', [
           if (numValues === 1) {
             numerator = file.getUint32(valueOffset, !bigEnd);
             denominator = file.getUint32(valueOffset + 4, !bigEnd);
-            val = new Number(numerator / denominator);
+            val = Number(numerator / denominator);
             val.numerator = numerator;
             val.denominator = denominator;
             return val;
@@ -1316,7 +1598,7 @@ app.service('cropEXIF', [
             while (n < numValues) {
               numerator = file.getUint32(valueOffset + 8 * n, !bigEnd);
               denominator = file.getUint32(valueOffset + 4 + 8 * n, !bigEnd);
-              vals[n] = new Number(numerator / denominator);
+              vals[n] = Number(numerator / denominator);
               vals[n].numerator = numerator;
               vals[n].denominator = denominator;
               n++;

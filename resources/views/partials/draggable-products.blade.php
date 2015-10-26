@@ -4,7 +4,8 @@
          class="product-item"
          show-details
          item="product"
-         ng-class="getClasses(product)">
+         ng-class="getClasses(product)"
+         drag ng-model="product" top-scope="$parent.draggableProducts">
 
         <a ng-href="/product/{{product.id}}">
             <img class="product-image" ng-attr-alt="{{product.name}}" ng-src="{{product.image}}" />
@@ -17,7 +18,7 @@
             <span class="price">{{product.price}},-</span>
         </div>
     </div>
-    <div style="text-align: center; clear: both;" ng-show="loadingImages">
+    <div style="text-align: center;" ng-show="loadingImages">
         <img src="{! URL::asset('images/to-loader.gif') !}" style="height: 100px;" alt="loading data"/>
     </div>
 </div>

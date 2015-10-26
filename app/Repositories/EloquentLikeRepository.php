@@ -24,8 +24,8 @@ class EloquentLikeRepository implements LikeRepository
 	public function createOrUpdate(array $input)
 	{
 		$like = Like::where('user_id', $input['user_id'])->where('product_id', $input['product_id'])->first();
-		if ( $like && isset($input['owned']) ) {
-			$like->owned = $input['owned'];
+		if ( $like && isset($input['box_id']) ) {
+			$like->box_id = $input['box_id'];
 			$like->save();
 		} else {
 			$like = Like::create($input);

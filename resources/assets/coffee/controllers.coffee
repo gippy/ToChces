@@ -31,17 +31,27 @@ app.controller 'NavigationController', ['$scope', ($scope) ->
 	$scope.showRegister = () -> $scope.$parent.showModal('register')
 	$scope.showProfile = () -> $scope.$parent.showModal('profile')
 
+	$scope.$on "reachedMenuLimit", (event, data) ->
+		if data.type is "over" then $scope.scrollClass = 'scrolling'
+		else $scope.scrollClass = ''
+
 	$scope.scrollClass = ''
-	$scope.scrollChanged = () -> $scope.scrollClass = if $scope.scrollClass then '' else 'scrolling'
 
 	$scope.$parent.navigationController = $scope
 ]
 
 app.controller 'PageController', ['$scope', '$http', ($scope, $http) ->
 	$scope.$parent.pageController = $scope
+	$scope.draggableProducts =
+		drop: (draggedItem, dropedItem) ->
+			$scope.$broadcast "drop", {
+				drag: draggedItem
+				drop: dropedItem
+		}
 ]
 
 app.controller 'ModalController', ['$scope', '$http', '$sce', ($scope, $http, $sce)->
+	$scope.stack = []
 	$scope.visible = false
 	$scope.content = ''
 	$scope.type = ''
@@ -83,14 +93,122 @@ app.controller 'ModalController', ['$scope', '$http', '$sce', ($scope, $http, $s
 					alert(data.error)
 				)
 
+	$scope.box =
+		id: null
+		name: null
+		color: 'red'
+		remove: false
+		removeContents: false
+		callback: null
+
+		confirmMessage: null
+		confirmCb: null
+
+		init: (cb, box) ->
+			$scope.box.callback = cb
+			if box
+				$scope.box.id = box.id
+				$scope.box.name = box.name
+				$scope.box.color = box.color
+				$scope.box.remove = $scope.box.removeContents = false
+
+		save: () ->
+			if $scope.box.remove
+				$scope.box.confirmMessage = 'Opravdu chcete smazat tento seznam?'
+				$scope.box.confirmCb = () ->
+					if $scope.box.callback then $scope.box.callback($scope.box)
+			else if $scope.box.removeContents
+				$scope.box.confirmMessage = 'Opravdu chcete smazat obsah tohoto seznamu?'
+				$scope.box.confirmCb = () ->
+					if $scope.box.callback then $scope.box.callback($scope.box)
+			else if $scope.box.callback then $scope.box.callback($scope.box)
+
+		confirm: () ->
+			$scope.box.confirmCb()
+			$scope.box.cleanConfirmation()
+
+		cleanConfirmation: () ->
+			$scope.box.confirmMessage = null
+			$scope.box.confirmCb = null
+
+	$scope.boxes =
+		boxes: null
+		callback: null
+		mergeCb: null
+		removeCb: null
+		removeContentsCb: null
+
+		confirmMessage: ''
+		confirmCb: null
+
+		mergeFrom: null
+		mergeTo: null
+
+		init: (cb, boxes) ->
+			$scope.boxes.callback = cb
+			$scope.boxes.boxes = boxes
+
+		showEdit: (box) ->
+			$scope.box.init($scope.boxes.edit, box)
+			$scope.open 'edit-box'
+
+		edit: (box) ->
+			if box.remove then $scope.boxes.remove(box)
+			else $http.post('/boxes/update', box).success (box)->
+				position = -1
+				position = key for existingBox, key in $scope.boxes.boxes when box.id is existingBox.id
+				if position != -1
+					$scope.boxes.boxes[position].name = box.name
+					$scope.boxes.boxes[position].color = box.color
+				if $scope.boxes.callback then $scope.boxes.callback($scope.boxes.boxes)
+
+			if box.removeContents then $scope.boxes.removeContents(box)
+			$scope.close()
+
+		merge: (from, to) ->
+			$scope.$apply ()->
+				$scope.boxes.confirmMessage = 'Opravdu chcete sloucit obsah z "' + from.name + '" do "' + to.name + '"?';
+				$scope.boxes.mergeFrom = from
+				$scope.boxes.mergeTo = to
+				$scope.boxes.confirmCb = () ->
+					$http.get('/boxes/merge?from='+$scope.boxes.mergeFrom.id+'&to='+$scope.boxes.mergeTo.id).success (data)->
+						window.location.reload()
+
+		remove: (box) ->
+			$http.get('/boxes/remove?box='+box.id).success ()->
+				window.location.reload()
+
+		removeLocalBox: (box) ->
+			position = -1
+			position = key for item, key in $scope.boxes when item.id is box.id
+			if position != -1 then $scope.boxes.splice(position, 1)
+
+		removeContents: (box) ->
+			$http.get('/boxes/removeContents?box='+box.id).success ()-> window.location.reload()
+
+		confirm: () ->
+			$scope.boxes.confirmCb()
+			$scope.boxes.cleanConfirmation()
+
+		cleanConfirmation: () ->
+			$scope.boxes.confirmMessage = ''
+			$scope.boxes.confirmCb = null
+
+		drop: (from, to) -> $scope.boxes.merge(from, to)
+
 	getModal = (type, cb) ->
 		$scope.url = '/modal/' + type
 		cb()
 
 	$scope.isVisible = () -> return $scope.visible
-	$scope.close = () -> $scope.visible = false
+
+	$scope.close = () ->
+		$scope.stack.pop()
+		if $scope.stack.length then $scope.open $scope.stack.pop()
+		else $scope.visible = false
+
 	$scope.open = (type) ->
-		if $scope.visible then $scope.close()
+		$scope.stack.push type
 		getModal type, () ->
 			$scope.type = type
 			$scope.visible = true
@@ -208,6 +326,7 @@ app.controller 'ProductsController', ['$scope', '$http', '$sce', ($scope, $http)
 		$http.get(dataUrl + (if page then '?page='+page else '?' ) + query).success (data) ->
 			$scope.products = $scope.products.concat(data.products)
 			$scope.loadingImages = false
+			page++
 
 	$scope.init = () ->
 		path = window.location.pathname;
@@ -219,6 +338,7 @@ app.controller 'ProductsController', ['$scope', '$http', '$sce', ($scope, $http)
 		classes = []
 		if product.liked then classes.push 'liked'
 		if product.owned then classes.push 'owned'
+		if product.color then classes.push 'corner ' + product.color
 
 		classes.push product.layout
 
@@ -233,6 +353,49 @@ app.controller 'ProductsController', ['$scope', '$http', '$sce', ($scope, $http)
 	$scope.iDontHaveThis = (product, $event) ->
 		$http.get('/product/'+product.id+'/disown').success () -> product.owned = false
 
+	$scope.$on "scrolledToBottom", () ->
+		if page != 0 then $scope.getNextPage()
+
+	$scope.$on "drop", (event, data) ->
+		dragProduct = data.drag
+		box = data.drop
+		$http.get('/product/'+dragProduct.id+'/toBox?box='+box.id).success (product) ->
+			pos = -1
+			pos = key for oldProduct, key in $scope.products when oldProduct.id = product.id
+			if key != -1 then	$scope.products[pos] = product
+			else $scope.products.push product
+
 	$scope.init();
+
+]
+
+app.controller 'BoxesController', ['$scope', '$http', ($scope, $http) ->
+	$scope.boxes = []
+
+	$http.get('/boxes').success (data) -> $scope.boxes = data
+
+	$scope.addBox = () ->
+		$base = $scope.$parent.$parent
+		$base.modalController.box.init (box) ->
+			$http.post('/boxes/create', box).success (box)->
+				$scope.boxes.push box
+				$scope.modalController.close()
+
+		$base.showModal('edit-box')
+
+	$scope.editBoxes = () ->
+		$base = $scope.$parent.$parent
+		$base.modalController.boxes.init(
+				(boxes) ->
+					$scope.boxes = boxes
+					$scope.modalController.close()
+				$scope.boxes
+		)
+		$base.showModal('boxes')
+
+	$scope.$on "reachedBoxesLimit", (event, data) ->
+		if data.type is 'over' then $scope.scrollClass = 'scrolling'
+		else $scope.scrollClass = ''
+
 
 ]

@@ -7,7 +7,7 @@
 @endsection
 
 @section('content')
-    <div class="welcome narrow">
-        @include('partials.products')
+    <div class="welcome narrow pad-t-l">
+        @include('partials/products')
     </div>
 @endsection

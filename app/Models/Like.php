@@ -16,7 +16,7 @@ class Like extends Model {
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['user_id', 'product_id', 'owned'];
+	protected $fillable = ['user_id', 'product_id', 'owned', 'box_id'];
 
 	/**
 	 * Get the liked product.
@@ -25,12 +25,21 @@ class Like extends Model {
 	{
 		return $this->belongsTo('ToChces\Models\Product');
 	}
+
 	/**
 	 * Get the user that liked the product.
 	 */
 	public function user()
 	{
 		return $this->belongsTo('ToChces\Models\User');
+	}
+
+	/**
+	 * Get the box of this like.
+	 */
+	public function box()
+	{
+		return $this->belongsTo('ToChces\Models\Box');
 	}
 
 	protected $primaryKey = ['user_id', 'product_id'];

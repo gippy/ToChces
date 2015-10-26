@@ -42,36 +42,31 @@ app.directive 'productImageOption', () ->
 
 app.directive 'scrollOver', ($window, $document) -> return {
 	restrict: 'A'
-	scope:
-		limit: '@'
-		onChange: '&'
 	link: (scope, element, attrs) ->
-		scope.overScroll = false
-
 		windowElement = angular.element($window)
-		timeout = null
 		lastPosition = null
+		lastCurrPosition = null
+
+		menuLimit = 50
+		boxesLimit = 300
+		bottomLimit = 50
 
 		handler = () ->
 			position = windowElement.scrollTop()
-			if scope.overScroll and position < scope.limit
-				scope.overScroll = false
-				scope.onChange()
-			else if !scope.overScroll and position > scope.limit
-				scope.overScroll = true
-				scope.onChange()
+			if position >= menuLimit and lastPosition < menuLimit
+				scope.$broadcast 'reachedMenuLimit', {type: "over", position: position}
+			else if position < menuLimit and lastPosition >= menuLimit
+				scope.$broadcast 'reachedMenuLimit', {type: "under", position: position}
+			if position >= boxesLimit and lastPosition < boxesLimit
+				scope.$broadcast 'reachedBoxesLimit', {type: "over", position: position}
+			else if position < boxesLimit and lastPosition >= boxesLimit
+				scope.$broadcast 'reachedBoxesLimit', {type: "under", position: position}
+			lastPosition = position
 
 			currPosition = position + windowElement.height()
-			if currPosition > $document.height() - 50
-				if currPosition > lastPosition
-					lastPosition = currPosition
-					window.clearTimeout(timeout)
-					timeout = window.setTimeout(
-						() ->
-							scope.$emit "scrolledToBottom", {}
-							console.log 'bottom'
-						, 1000
-					)
+			limit = $document.height() - bottomLimit
+			if currPosition > limit and lastCurrPosition <= limit then scope.$broadcast "scrolledToBottom", {}
+			lastCurrPosition = currPosition
 
 		windowElement.on 'scroll', scope.$apply.bind(scope, handler)
 		handler()
@@ -84,6 +79,46 @@ app.directive 'fileField', () -> {
 		element.bind 'change', (event) ->
 			files = event.target.files
 			if files.length then scope.$emit "fileSelected", {files: files}
+}
+
+app.directive 'drag', () -> {
+scope:
+	topScope: "="
+require: 'ngModel',
+
+link: (scope, element, attrs, model) ->
+	element.attr('draggable', true)
+
+	element.bind 'dragstart', (event) ->
+		event.originalEvent.dataTransfer.effectAllowed = "link";
+		scope.topScope.dragModel = model
+
+	element.bind 'dragend', () ->
+		if !scope.topScope.droping then scope.topScope.dragModel = null
+}
+
+app.directive 'drop', () -> {
+	scope:
+		topScope: "="
+	require: 'ngModel',
+
+	link: (scope, element, attrs, model) ->
+		element.attr('draggable', true)
+		element.bind 'dragover', (event) -> event.preventDefault()
+
+		element.bind 'dragenter', (event) ->
+			event.preventDefault()
+			event.originalEvent.dataTransfer.dropEffect = "link";
+			scope.topScope.dropModel = model
+
+		element.bind 'dragleave', () -> scope.topScope.dropModel = null
+
+		element.bind 'drop', () ->
+			scope.topScope.droping = true
+			scope.topScope.drop(scope.topScope.dragModel.$viewValue, scope.topScope.dropModel.$viewValue)
+			scope.topScope.dragModel = null
+			scope.topScope.dropModel = null
+			scope.topScope.droping = false
 }
 
 

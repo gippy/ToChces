@@ -6,10 +6,11 @@ use ToChces\Models\Like;
 use Session;
 use DB;
 use Input;
+use Log;
 
 class EloquentProductRepository implements ProductRepository
 {
-	protected $limit = 50;
+	protected $limit = 15;
 
 	public function all($page = -1) {
 		$query = Product::with('likes');

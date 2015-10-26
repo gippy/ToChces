@@ -63,6 +63,7 @@ Route::get('/product/{product}/like', 'ProductsController@like');
 Route::get('/product/{product}/dislike', 'ProductsController@dislike');
 Route::get('/product/{product}/own', 'ProductsController@own');
 Route::get('/product/{product}/disown', 'ProductsController@disown');
+Route::get('/product/{product}/toBox', 'ProductsController@toBox');
 Route::post('/product/saveTempImage', 'ProductsController@saveTemp');
 
 Route::get('/add', [
@@ -70,7 +71,18 @@ Route::get('/add', [
 ]);
 Route::post('/add', 'ProductsController@addSubmit');
 
+Route::get('/boxes', 'BoxesController@all');
+Route::post('/boxes/create', 'BoxesController@create');
+Route::post('/boxes/update', 'BoxesController@update');
+Route::get('/boxes/remove', 'BoxesController@remove');
+Route::get('/boxes/removeContents', 'BoxesController@removeContents');
+Route::get('/boxes/merge', 'BoxesController@merge');
+
+
 Route::get('/modal/login', 'ModalController@login');
 Route::get('/modal/register', 'ModalController@register');
 Route::get('/modal/categories', 'ModalController@categories');
 Route::get('/modal/login-email', 'ModalController@loginWithEmail');
+
+Route::get('/modal/edit-box', 'ModalController@editBox');
+Route::get('/modal/boxes', 'ModalController@boxes');

@@ -22,4 +22,14 @@ class ModalController extends Controller {
 		return view('modals/register');
 	}
 
+	public function editBox()
+	{
+		return view('modals/edit-box');
+	}
+
+	public function boxes()
+	{
+		return view('modals/boxes');
+	}
+
 }

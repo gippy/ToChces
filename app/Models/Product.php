@@ -24,10 +24,10 @@ class Product extends Model {
 	 *
 	 * @var array
 	 */
-	protected $appends = ['liked', 'owned'];
+	protected $appends = ['liked', 'owned', 'color'];
 
 	protected $like = false;
-
+	protected $box = false;
 
 	public function likes()
 	{
@@ -46,12 +46,21 @@ class Product extends Model {
 	}
 
 	public function getOwnedAttribute(){
-		$like = $this->like();
-		return $like && $like->owned;
+		$box = $this->box;
+		return $box && $box->id == 2;
+	}
+
+	public function getColorAttribute(){
+		return $this->box() != null ? $this->box()->color : '';
 	}
 
 	public function tags(){
 		return $this->belongsToMany('ToChces\Models\Tag', 'tag_product');
+	}
+
+	public function box(){
+		$like = $this->like();
+		return $like ? $like->box : null;
 	}
 	
 

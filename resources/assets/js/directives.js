@@ -50,37 +50,46 @@ app.directive('productImageOption', function() {
 app.directive('scrollOver', function($window, $document) {
   return {
     restrict: 'A',
-    scope: {
-      limit: '@',
-      onChange: '&'
-    },
     link: function(scope, element, attrs) {
-      var handler, lastPosition, timeout, windowElement;
-      scope.overScroll = false;
+      var bottomLimit, boxesLimit, handler, lastCurrPosition, lastPosition, menuLimit, windowElement;
       windowElement = angular.element($window);
-      timeout = null;
       lastPosition = null;
+      lastCurrPosition = null;
+      menuLimit = 50;
+      boxesLimit = 300;
+      bottomLimit = 50;
       handler = function() {
-        var currPosition, position;
+        var currPosition, limit, position;
         position = windowElement.scrollTop();
-        if (scope.overScroll && position < scope.limit) {
-          scope.overScroll = false;
-          scope.onChange();
-        } else if (!scope.overScroll && position > scope.limit) {
-          scope.overScroll = true;
-          scope.onChange();
+        if (position >= menuLimit && lastPosition < menuLimit) {
+          scope.$broadcast('reachedMenuLimit', {
+            type: "over",
+            position: position
+          });
+        } else if (position < menuLimit && lastPosition >= menuLimit) {
+          scope.$broadcast('reachedMenuLimit', {
+            type: "under",
+            position: position
+          });
         }
+        if (position >= boxesLimit && lastPosition < boxesLimit) {
+          scope.$broadcast('reachedBoxesLimit', {
+            type: "over",
+            position: position
+          });
+        } else if (position < boxesLimit && lastPosition >= boxesLimit) {
+          scope.$broadcast('reachedBoxesLimit', {
+            type: "under",
+            position: position
+          });
+        }
+        lastPosition = position;
         currPosition = position + windowElement.height();
-        if (currPosition > $document.height() - 50) {
-          if (currPosition > lastPosition) {
-            lastPosition = currPosition;
-            window.clearTimeout(timeout);
-            return timeout = window.setTimeout(function() {
-              scope.$emit("scrolledToBottom", {});
-              return console.log('bottom');
-            }, 1000);
-          }
+        limit = $document.height() - bottomLimit;
+        if (currPosition > limit && lastCurrPosition <= limit) {
+          scope.$broadcast("scrolledToBottom", {});
         }
+        return lastCurrPosition = currPosition;
       };
       windowElement.on('scroll', scope.$apply.bind(scope, handler));
       return handler();
@@ -100,6 +109,57 @@ app.directive('fileField', function() {
             files: files
           });
         }
+      });
+    }
+  };
+});
+
+app.directive('drag', function() {
+  return {
+    scope: {
+      topScope: "="
+    },
+    require: 'ngModel',
+    link: function(scope, element, attrs, model) {
+      element.attr('draggable', true);
+      element.bind('dragstart', function(event) {
+        event.originalEvent.dataTransfer.effectAllowed = "link";
+        return scope.topScope.dragModel = model;
+      });
+      return element.bind('dragend', function() {
+        if (!scope.topScope.droping) {
+          return scope.topScope.dragModel = null;
+        }
+      });
+    }
+  };
+});
+
+app.directive('drop', function() {
+  return {
+    scope: {
+      topScope: "="
+    },
+    require: 'ngModel',
+    link: function(scope, element, attrs, model) {
+      element.attr('draggable', true);
+      element.bind('dragover', function(event) {
+        return event.preventDefault();
+      });
+      element.bind('dragenter', function(event) {
+        event.preventDefault();
+        event.originalEvent.dataTransfer.dropEffect = "link";
+        return scope.topScope.dropModel = model;
+      });
+      element.bind('dragleave', function() {
+        return scope.topScope.dropModel = null;
+      });
+      return element.bind('drop', function() {
+        scope.topScope.droping = true;
+        scope.topScope.drop(scope.topScope.dragModel.$viewValue, scope.topScope.dropModel.$viewValue);
+        scope.topScope.dragModel = null;
+        scope.topScope.dropModel = null;
+        return scope.topScope.droping = false;
       });
     }
   };

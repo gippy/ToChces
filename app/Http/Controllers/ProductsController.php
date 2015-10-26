@@ -36,7 +36,7 @@ class ProductsController extends Controller {
 	public function all(){
 
 		return Response::json(array(
-			"products" => $this->productRepository->all()
+			"products" => $this->getProducts()
 		));
 	}
 
@@ -141,6 +141,16 @@ class ProductsController extends Controller {
 		return response()->json(['src' => '/download/'.$file]);
 	}
 
+	public function toBox(Product $product){
+		$box = Request::input("box");
+		$this->likeRepository->createOrUpdate([
+			'product_id' => $product->id,
+			'user_id' => Auth::user()->id,
+			'box_id' => $box
+		]);
+		return Response::json($product);
+	}
+
 	public function like(Product $product){
 		$like = $this->likeRepository->createOrUpdate([
 			'product_id' => $product->id,
@@ -158,7 +168,7 @@ class ProductsController extends Controller {
 		$like = $this->likeRepository->createOrUpdate([
 			'product_id' => $product->id,
 			'user_id' => Auth::user()->id,
-			'owned' => true
+			'box' => 2
 		]);
 		return $this->handleLikeChange($like);
 	}
@@ -167,7 +177,7 @@ class ProductsController extends Controller {
 		$like = $this->likeRepository->createOrUpdate([
 			'product_id' => $product->id,
 			'user_id' => Auth::user()->id,
-			'owned' => false
+			'box' => 1
 		]);
 		return $this->handleLikeChange($like);
 	}
@@ -236,9 +246,8 @@ class ProductsController extends Controller {
 
 	private function getProducts($user = null) {
 		$page = Input::query('page');
-		$categories = Input::query('categories');
-		if ($user) return $this->productRepository->byUser($user, $categories, $page);
-		else return $this->productRepository->all($categories, $page);
+		if ($user) return $this->productRepository->byUser($user, $page);
+		else return $this->productRepository->all($page);
 	}
 
 	public function saveTemp(){

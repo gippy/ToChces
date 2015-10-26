@@ -548,6 +548,14 @@ body.has-modal .page {
   text-align: center;
   padding-bottom: 0;
 }
+.modal.boxes .wrapper {
+  width: 500px;
+  text-align: center;
+}
+.modal.edit-box .wrapper {
+  width: 588px;
+  text-align: center;
+}
 .modal.login-email .wrapper,
 .modal.register .wrapper {
   width: 488px;
@@ -821,6 +829,9 @@ a.btn:visited {
   cursor: inherit;
   display: block;
 }
+button.red {
+  background-color: darkred;
+}
 .clearfix:after {
   content: "";
   display: table;
@@ -923,30 +934,6 @@ a.btn:visited {
 }
 .product-item.liked .name {
   max-width: 100%;
-}
-.product-item.liked:not(.owned):after {
-  content: "";
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 30px 30px 0 0;
-  border-color: #27AAE1 transparent transparent transparent;
-}
-.product-item.owned:after {
-  content: "";
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 30px 30px 0 0;
-  border-color: #39B54A transparent transparent transparent;
 }
 .product-item .details {
   box-sizing: border-box;
@@ -1324,6 +1311,171 @@ tags-input .autocomplete .suggestion-item em {
   font-weight: bold;
   color: #000;
   background-color: #ffffff;
+}
+.boxes.scrolling {
+  position: fixed;
+  top: 42px;
+  padding: 20px;
+  left: 0;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 10;
+}
+.boxes-placeholder {
+  height: 100px;
+}
+.box {
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+  color: #35a8e0;
+  border: 1px solid #35a8e0;
+  background: transparent;
+  font-size: 18px;
+  line-height: 18px;
+  padding: 10px 10px 10px 30px;
+  width: 140px;
+  text-align: center;
+  vertical-align: top;
+  white-space: normal;
+  overflow: hidden;
+}
+.editable-box {
+  margin: 10px;
+  display: inline-block;
+}
+.editable-box img {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background-color: #35a8e0;
+  cursor: pointer;
+  vertical-align: top;
+}
+.editable-box img:hover {
+  background-color: #1e8ec4;
+}
+.corner:after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 30px 30px 0 0;
+  border-color: gray transparent transparent transparent;
+}
+.corner.red:after {
+  border-color: #ff0f0f transparent transparent transparent;
+}
+.corner.brown:after {
+  border-color: #a97700 transparent transparent transparent;
+}
+.corner.orange:after {
+  border-color: #f9b600 transparent transparent transparent;
+}
+.corner.yellow:after {
+  border-color: #f1ff05 transparent transparent transparent;
+}
+.corner.base-blue:after {
+  border-color: #27AAE1 transparent transparent transparent;
+}
+.corner.light-blue:after {
+  border-color: #00e4c6 transparent transparent transparent;
+}
+.corner.blue:after {
+  border-color: #005eff transparent transparent transparent;
+}
+.corner.light-green:after {
+  border-color: #34f400 transparent transparent transparent;
+}
+.corner.green:after {
+  border-color: #39B54A transparent transparent transparent;
+}
+.corner.purple:after {
+  border-color: #a300f9 transparent transparent transparent;
+}
+.corner.pink:after {
+  border-color: #ff54b3 transparent transparent transparent;
+}
+.corner.light-ping:after {
+  border-color: #ffb4d3 transparent transparent transparent;
+}
+.colors {
+  display: inline-block;
+  text-align: left;
+}
+.colors span {
+  display: inline-block;
+  margin: 0 5px;
+  width: 20px;
+  height: 40px;
+}
+.colors span.active {
+  width: 16px;
+  height: 36px;
+  border: 2px solid #35a8e0;
+}
+.colors span:first-child {
+  margin-left: 10px;
+}
+.colors span:last-child {
+  margin-right: 0px;
+}
+.colors span.red {
+  background-color: #ff0f0f;
+}
+.colors span.brown {
+  background-color: #a97700;
+}
+.colors span.orange {
+  background-color: #f9b600;
+}
+.colors span.yellow {
+  background-color: #f1ff05;
+}
+.colors span.base-blue {
+  background-color: #27AAE1;
+}
+.colors span.light-blue {
+  background-color: #00e4c6;
+}
+.colors span.blue {
+  background-color: #005eff;
+}
+.colors span.light-green {
+  background-color: #34f400;
+}
+.colors span.green {
+  background-color: #39B54A;
+}
+.colors span.purple {
+  background-color: #a300f9;
+}
+.colors span.pink {
+  background-color: #ff54b3;
+}
+.colors span.light-ping {
+  background-color: #ffb4d3;
+}
+.profile .box {
+  margin: 5px;
+}
+.profile .box:nth-child(4) {
+  margin-left: 0;
+}
+.profile .box:nth-child(3) {
+  margin-right: 0;
+}
+.profile .boxes.center {
+  text-align: center;
+}
+.profile .boxes .options {
+  font-size: 18px;
+  text-align: center;
 }
 /*!
  *  Font Awesome 4.4.0 by @davegandy - http://fontawesome.io - @fontawesome
