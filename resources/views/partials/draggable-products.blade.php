@@ -1,6 +1,5 @@
-<div class="products mrg-b-m" ng-controller="ProductsController" masonry='{ "transitionDuration" : "0.4s" , "columnWidth": 304, "itemSelector" : ".product-item"}'>
-    <div masonry-tile
-         ng-repeat="product in products"
+<div class="products draggable-products mrg-b-m" ng-controller="ProductsController">
+    <div ng-repeat="product in products | filter:byColor"
          class="product-item"
          show-details
          item="product"
@@ -15,7 +14,7 @@
                 <img ng-if="!product.liked" class="to" src="{! URL::asset('images/to-small.png') !}" alt="To Chci" ng-click="iWantThis(product)" />
             @endif
             <a class="name" ng-href="/product/{{product.id}}">{{product.name}}</a>
-            <span class="price">{{product.price}},-</span>
+            <span class="price">{{product.price}} Kč</span>
         </div>
     </div>
     <div style="text-align: center;" ng-show="loadingImages">

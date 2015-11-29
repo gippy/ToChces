@@ -1,251 +1,258 @@
 @import "variables.less";
 
 .clearfix {
-  &:after {
-	content:"";
-	display:table;
-	clear:both;
-  }
+	&:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
 }
 
 .mrg-t-l {
-  margin-top: @baseline * 3;
+	margin-top: @baseline * 3;
 }
 
 .mrg-t-m {
-  margin-top: @baseline * 2;
+	margin-top: @baseline * 2;
 }
 
 .mrg-t-s {
-  margin-top: @baseline;
+	margin-top: @baseline;
 }
 
 .mrg-t-xs {
-  margin-top: @baseline * 0.5;
+	margin-top: @baseline * 0.5;
 }
 
 .mrg-t-n {
-  margin-bottom: 0;
+	margin-bottom: 0;
 }
 
 .mrg-b-l {
-  margin-bottom: @baseline * 3;
+	margin-bottom: @baseline * 3;
 }
 
 .mrg-b-m {
-  margin-bottom: @baseline * 2;
+	margin-bottom: @baseline * 2;
 }
 
 .mrg-b-s {
-  margin-bottom: @baseline;
+	margin-bottom: @baseline;
 }
 
 .mrg-b-xs {
-  margin-bottom: @baseline * 0.5;
+	margin-bottom: @baseline * 0.5;
 }
 
 .mrg-b-n {
-  margin-bottom: 0;
+	margin-bottom: 0;
 }
 
 .pad-t-l {
-  padding-top: @baseline * 3;
+	padding-top: @baseline * 3;
 }
 
 .pad-t-m {
-  padding-top: @baseline * 2;
+	padding-top: @baseline * 2;
 }
 
 .pad-t-s {
-  padding-top: @baseline;
+	padding-top: @baseline;
 }
 
 .pad-t-xs {
-  padding-top: @baseline * 0.5;
+	padding-top: @baseline * 0.5;
 }
 
 .pad-b-l {
-  padding-bottom: @baseline * 3;
+	padding-bottom: @baseline * 3;
 }
 
 .pad-b-m {
-  padding-bottom: @baseline * 2;
+	padding-bottom: @baseline * 2;
 }
 
 .pad-b-s {
-  padding-bottom: @baseline;
+	padding-bottom: @baseline;
 }
 
 .pad-b-xs {
-  padding-bottom: @baseline * 0.5;
+	padding-bottom: @baseline * 0.5;
 }
 
 .narrow {
-  width: 608px;
-  margin:0 auto;
+	width: 608px;
+	margin: 0 auto;
 }
 
 .wide {
-  width: 820px;
-  margin: 0 auto;
+	width: 820px;
+	margin: 0 auto;
 }
 
 .pull-left {
-  float: left;
-  padding-right: @baseline;
+	float: left;
+	padding-right: @baseline;
 }
 
 .pull-right {
-  float: right;
-  padding-right: @baseline;
+	float: right;
+	padding-right: @baseline;
 }
 
 .product-item {
-  display: block;
-  margin: 9px;
-  width: 286px;
-  height: 286px;
-  overflow: hidden;
-  position: relative;
-
-  &:after {
-	content:"";
-	display:table;
-	clear:both;
-  }
-
-  &.landscape {
-	width: 584px;
-	img {
-	  width: 584px;
-	}
-  }
-  &.portrait {
-	height: 584px;
-	img {
-	  height: 584px;
-	}
-  }
-
-  &.liked {
-	.name {
-	  max-width: 100%;
-	}
-  }
-
-  .details {
-	box-sizing: border-box;
-	position: absolute;
-	left: 0;
-	bottom: -100%;
-	display: block;
-	background: rgb(255,255,255);
-	width: 100%;
-	padding: @baseline/2;
-	transition: bottom 400ms ease-in-out;
-
-	&.guest .name {
-	  max-width: 100%;
-	}
-  }
-  &:hover .details {
-	bottom: 0;
-  }
-  .name {
-	float: left;
-	font-size: 12px;
-	line-height: 1.31em;
-	font-weight: bold;
-	display: inline-block;
-	color: black;
-	padding-right:50px;
-  }
-  .price {
-	font-size: 12px;
-	line-height: 1.31em;
-	display: inline-block;
-	clear: left;
-	float: left;
-  }
-  .to {
-	position: absolute;
-	max-width: 32px;
-	max-height: 21px;
-	right: 0;
-	bottom: 6px;
-	height: 21px;
-	width: 32px;
 	display: block;
 	margin: 9px;
-	cursor: pointer;
-  }
-}
-.product {
-  display: block;
-  width: 820px;
-  height: 286px;
-  &:after {
-	content:"";
-	display:table;
-	clear:both;
-  }
-
-  & > img {
-	float: left;
-  }
-
-  .info {
-	box-sizing: border-box;
-	padding: @baseline;
-	float: left;
-	width: 534px;
+	width: 286px;
 	height: 286px;
-	overflow: auto;
-	background-color: rgb(255,255,255);
-	background-color: rgba(255,255,255,0.6);
+	overflow: hidden;
 	position: relative;
-  }
 
-  &.landscape {
-	& > img{
-	  display: block;
-	  float: none;
-	  margin: auto;
-	  width: 584px;
+	&:after {
+		content: "";
+		display: table;
+		clear: both;
 	}
+
+	&.landscape {
+		width: 584px;
+		img {
+			width: 584px;
+		}
+	}
+	&.portrait {
+		height: 584px;
+		img {
+			height: 584px;
+		}
+	}
+
+	&.liked {
+		.name {
+			max-width: 100%;
+		}
+	}
+
+	.details {
+		box-sizing: border-box;
+		position: absolute;
+		left: 0;
+		bottom: -100%;
+		display: block;
+		background: rgb(255, 255, 255);
+		width: 100%;
+		padding: @baseline/2;
+		transition: bottom 400ms ease-in-out;
+
+		&.guest .name {
+			max-width: 100%;
+		}
+	}
+	&:hover .details {
+		bottom: 0;
+	}
+	.name {
+		float: left;
+		font-size: 12px;
+		line-height: 1.31em;
+		font-weight: bold;
+		display: inline-block;
+		color: black;
+		padding-right: 50px;
+	}
+	.price {
+		font-size: 12px;
+		line-height: 1.31em;
+		display: inline-block;
+		clear: left;
+		float: left;
+	}
+	.to {
+		position: absolute;
+		max-width: 32px;
+		max-height: 21px;
+		right: 0;
+		bottom: 6px;
+		height: 21px;
+		width: 32px;
+		display: block;
+		margin: 9px;
+		cursor: pointer;
+	}
+}
+
+.product {
+	display: block;
+	width: 820px;
+	height: 286px;
+	&:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+
+	& > img {
+		float: left;
+	}
+
 	.info {
-	  width: 584px;
-	  float: none;
-	  margin: auto;
+		box-sizing: border-box;
+		padding: @baseline;
+		float: left;
+		width: 534px;
+		height: 286px;
+		overflow: auto;
+		background-color: rgb(255, 255, 255);
+		background-color: rgba(255, 255, 255, 0.6);
+		position: relative;
 	}
-  }
 
-  &.portrait {
-	& > img{
-	  height: 584px;
-	  width: 286px;
+	&.landscape {
+		& > img {
+			display: block;
+			float: none;
+			margin: auto;
+			width: 584px;
+		}
+		.info {
+			width: 584px;
+			float: none;
+			margin: auto;
+		}
 	}
-	.info {
-	  height: 584px;
-	}
-  }
 
-  p {
-	font-size: 20px;
-	margin-top: 0;
-	line-height: 1.26em;
-  }
-  .icons {
-	position: absolute;
-	right: 0;
-	bottom: 0;
-  }
-  img.icon {
-	height: 26px;
-	margin-right: 5px;
-	float: right;
-  }
-  .tochci, .tomam, .tonechci {
-	cursor: pointer;
-  }
+	&.portrait {
+		& > img {
+			height: 584px;
+			width: 286px;
+		}
+		.info {
+			height: 584px;
+		}
+	}
+
+	p {
+		font-size: 20px;
+		margin-top: 0;
+		line-height: 1.26em;
+	}
+	.icons {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		width: 100%;
+	}
+	.creator {
+		float: left;
+		font-size: 0.8em;
+		padding: 0 20px;
+	}
+	img.icon {
+		height: 26px;
+		margin-right: 5px;
+		float: right;
+	}
+	.tochci, .tomam, .tonechci {
+		cursor: pointer;
+	}
 }

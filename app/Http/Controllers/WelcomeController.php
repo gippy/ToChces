@@ -1,6 +1,7 @@
 <?php namespace ToChces\Http\Controllers;
 
 use Response;
+use Auth;
 
 class WelcomeController extends Controller {
 
@@ -29,7 +30,8 @@ class WelcomeController extends Controller {
 	public function index()
 	{
 		$this->middleware('guest');
-		return view('welcome');
+		if (Auth::guest()) return view('welcome');
+		else return redirect('/home');
 	}
 
 	public function terms(){

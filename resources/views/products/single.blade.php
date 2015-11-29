@@ -12,8 +12,9 @@
         <div class="info clearfix">
             <p class="name">{! $product->name !} <br /> Od <span>{! $product->vendor !}</span></p>
             <p class="description">{! $product->description !}</p>
-            <p class="price">{! $product->price !} Kč</p>
+            <p class="price">{{ '{! $product->price !}' | crowns }}</p>
             <p class="icons">
+                <span class="creator">Přidáno uživatelem <a href="/user/{! $product->added_by !}">{! $product->creator->name !}</a></span>
                 @if(!$product->getLikedAttribute())
                     <a href="/product/{! $product->id !}/like" title="To chci"><img class="tochci icon" src="{! URL::asset('images/to-small.png')!}" alt="To chci"/></a>
                 @endif

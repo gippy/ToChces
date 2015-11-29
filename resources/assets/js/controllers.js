@@ -57,7 +57,7 @@ app.controller('BodyController', [
 ]);
 
 app.controller('NavigationController', [
-  '$scope', function($scope) {
+  '$scope', 'anchorSmoothScroll', function($scope, anchorSmoothScroll) {
     $scope.showCategories = function() {
       return $scope.$parent.showModal('categories');
     };
@@ -69,6 +69,16 @@ app.controller('NavigationController', [
     };
     $scope.showProfile = function() {
       return $scope.$parent.showModal('profile');
+    };
+    $scope.showHome = function() {
+      var isSinglePage, path;
+      path = window.location.pathname;
+      isSinglePage = path.indexOf('user') !== -1 || path.indexOf('profile') !== -1 || path.indexOf('product') !== -1;
+      if (!isSinglePage) {
+        return anchorSmoothScroll();
+      } else {
+        return window.location.href = '/';
+      }
     };
     $scope.$on("reachedMenuLimit", function(event, data) {
       if (data.type === "over") {
@@ -533,6 +543,13 @@ app.controller('ProductsController', [
         }
       });
     });
+    $scope.byColor = function(item) {
+      if ($scope.$parent.activeColor) {
+        return item.color === $scope.$parent.activeColor;
+      } else {
+        return true;
+      }
+    };
     return $scope.init();
   }
 ]);

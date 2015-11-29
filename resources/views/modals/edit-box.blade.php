@@ -11,6 +11,7 @@
     <div class="inline-field">
         <label>barva</label>
         <div class="colors">
+            <span class="dark-red" ng-class="box.color == 'dark-red' ? 'active': ''" ng-click="box.color='dark-red'"></span>
             <span class="red" ng-class="box.color == 'red' ? 'active': ''" ng-click="box.color='red'"></span>
             <span class="brown" ng-class="box.color == 'brown' ? 'active': ''" ng-click="box.color='brown'"></span>
             <span class="orange" ng-class="box.color == 'orange' ? 'active': ''" ng-click="box.color='orange'"></span>

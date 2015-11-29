@@ -25,11 +25,16 @@ app.controller 'BodyController', ['$scope', '$http', ($scope, $http)->
 	$http.get('/categories').success (categories) -> $scope.categories = categories
 ]
 
-app.controller 'NavigationController', ['$scope', ($scope) ->
+app.controller 'NavigationController', ['$scope', 'anchorSmoothScroll', ($scope, anchorSmoothScroll) ->
 	$scope.showCategories = () -> $scope.$parent.showModal('categories')
 	$scope.showSignIn = () -> $scope.$parent.showModal('login')
 	$scope.showRegister = () -> $scope.$parent.showModal('register')
 	$scope.showProfile = () -> $scope.$parent.showModal('profile')
+	$scope.showHome = () ->
+		path = window.location.pathname;
+		isSinglePage = path.indexOf('user') != -1 or path.indexOf('profile') != -1 or path.indexOf('product') != -1
+		if !isSinglePage then anchorSmoothScroll()
+		else window.location.href = '/'
 
 	$scope.$on "reachedMenuLimit", (event, data) ->
 		if data.type is "over" then $scope.scrollClass = 'scrolling'
@@ -376,6 +381,10 @@ app.controller 'ProductsController', ['$scope', '$http', '$sce', ($scope, $http)
 			pos = key for oldProduct, key in $scope.products when oldProduct.id is product.id
 			if key != -1 then	$scope.products[pos] = product
 			else $scope.products.push product
+
+	$scope.byColor = (item) ->
+		if $scope.$parent.activeColor then item.color is $scope.$parent.activeColor
+		else true
 
 	$scope.init();
 

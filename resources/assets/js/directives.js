@@ -124,12 +124,14 @@ app.directive('drag', function() {
       element.attr('draggable', true);
       element.bind('dragstart', function(event) {
         event.originalEvent.dataTransfer.effectAllowed = "link";
-        return scope.topScope.dragModel = model;
+        scope.topScope.dragModel = model;
+        return $('body').addClass('dragging');
       });
       return element.bind('dragend', function() {
         if (!scope.topScope.droping) {
-          return scope.topScope.dragModel = null;
+          scope.topScope.dragModel = null;
         }
+        return $('body').removeClass('dragging');
       });
     }
   };

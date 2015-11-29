@@ -92,9 +92,11 @@ link: (scope, element, attrs, model) ->
 	element.bind 'dragstart', (event) ->
 		event.originalEvent.dataTransfer.effectAllowed = "link";
 		scope.topScope.dragModel = model
+		$('body').addClass('dragging')
 
 	element.bind 'dragend', () ->
 		if !scope.topScope.droping then scope.topScope.dragModel = null
+		$('body').removeClass('dragging')
 }
 
 app.directive 'drop', () -> {
@@ -111,7 +113,8 @@ app.directive 'drop', () -> {
 			event.originalEvent.dataTransfer.dropEffect = "link";
 			scope.topScope.dropModel = model
 
-		element.bind 'dragleave', () -> scope.topScope.dropModel = null
+		element.bind 'dragleave', () ->
+			scope.topScope.dropModel = null
 
 		element.bind 'drop', () ->
 			scope.topScope.droping = true

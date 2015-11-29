@@ -39,7 +39,7 @@
                     <li><a href="{! URL::route('addProduct') !}">Přidat věc</a></li>
                     <li><a href="{! URL::route('profile') !}">Profil</a></li>
                 @endif
-                <li class="logo"><a href="/"><img src="{! URL::asset('images/logo.png') !}" width="115" height="100" alt="To Chcete"/></a></li>
+                <li class="logo"><a ng-click="showHome()"><img src="{! URL::asset('images/logo.png') !}" width="115" height="100" alt="To Chcete"/></a></li>
                 <li><a ng-click="showCategories()">Kategorie</a></li>
                 <li class="search">
                     <form method="GET" action="/home">

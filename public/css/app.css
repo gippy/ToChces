@@ -501,7 +501,7 @@ body.has-modal .navigation {
   cursor: pointer;
 }
 .message {
-  width: 590px;
+  width: 510px;
   margin: 42px auto 0 auto;
   padding: 100px 40px 40px 40px;
   font-size: 18px;
@@ -806,7 +806,7 @@ a.btn:visited {
   text-align: center;
   width: 200px;
   cursor: pointer;
-  background-color: #0569a8;
+  background: #00aeef;
   color: white;
   vertical-align: bottom;
   font-size: 20px;
@@ -1031,6 +1031,12 @@ button.red {
   position: absolute;
   right: 0;
   bottom: 0;
+  width: 100%;
+}
+.product .creator {
+  float: left;
+  font-size: 0.8em;
+  padding: 0 20px;
 }
 .product img.icon {
   height: 26px;
@@ -1320,6 +1326,7 @@ tags-input .autocomplete .suggestion-item em {
   width: 100%;
   background-color: rgba(255, 255, 255, 0.7);
   z-index: 10;
+  text-align: center;
 }
 .boxes-placeholder {
   height: 100px;
@@ -1339,6 +1346,12 @@ tags-input .autocomplete .suggestion-item em {
   vertical-align: top;
   white-space: normal;
   overflow: hidden;
+}
+.dragging .box {
+  box-shadow: 1px 1px 5px #35a8e0;
+}
+.box.active {
+  background-color: white;
 }
 .editable-box {
   margin: 10px;
@@ -1371,6 +1384,9 @@ tags-input .autocomplete .suggestion-item em {
 .corner.red:after {
   border-color: #ff0f0f transparent transparent transparent;
 }
+.corner.dark-red:after {
+  border-color: #AA0000 transparent transparent transparent;
+}
 .corner.brown:after {
   border-color: #a97700 transparent transparent transparent;
 }
@@ -1401,12 +1417,13 @@ tags-input .autocomplete .suggestion-item em {
 .corner.pink:after {
   border-color: #ff54b3 transparent transparent transparent;
 }
-.corner.light-ping:after {
+.corner.light-pink:after {
   border-color: #ffb4d3 transparent transparent transparent;
 }
 .colors {
   display: inline-block;
-  text-align: left;
+  text-align: right;
+  width: 426px;
 }
 .colors span {
   display: inline-block;
@@ -1419,14 +1436,14 @@ tags-input .autocomplete .suggestion-item em {
   height: 36px;
   border: 2px solid #35a8e0;
 }
-.colors span:first-child {
-  margin-left: 10px;
-}
 .colors span:last-child {
-  margin-right: 0px;
+  margin-right: 0;
 }
 .colors span.red {
   background-color: #ff0f0f;
+}
+.colors span.dark-red {
+  background-color: #aa0000;
 }
 .colors span.brown {
   background-color: #a97700;
@@ -1458,17 +1475,17 @@ tags-input .autocomplete .suggestion-item em {
 .colors span.pink {
   background-color: #ff54b3;
 }
-.colors span.light-ping {
+.colors span.light-pink {
   background-color: #ffb4d3;
 }
 .profile .box {
   margin: 5px;
 }
 .profile .box:nth-child(4) {
-  margin-left: 0;
-}
-.profile .box:nth-child(3) {
   margin-right: 0;
+}
+.profile .box:nth-child(4n+1) {
+  margin-left: 9px;
 }
 .profile .boxes.center {
   text-align: center;
@@ -1476,6 +1493,15 @@ tags-input .autocomplete .suggestion-item em {
 .profile .boxes .options {
   font-size: 18px;
   text-align: center;
+}
+.profile .scrolling .box:nth-child(4) {
+  margin-right: 5px;
+}
+.profile .scrolling .box:nth-child(4n+1) {
+  margin-left: 5px;
+}
+.draggable-products .product-item:hover {
+  box-shadow: 1px 1px 5px #35a8e0;
 }
 /*!
  *  Font Awesome 4.4.0 by @davegandy - http://fontawesome.io - @fontawesome

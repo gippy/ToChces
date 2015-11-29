@@ -14,7 +14,7 @@
                 <img ng-if="!product.liked" class="to" src="{! URL::asset('images/to-small.png') !}" alt="To Chci" ng-click="iWantThis(product)" />
             @endif
             <a class="name" ng-href="/product/{{product.id}}">{{product.name}}</a>
-            <span class="price">{{product.price}},-</span>
+            <span class="price">{{product.price | crowns}}</span>
         </div>
     </div>
     <div style="text-align: center; clear: both;" ng-show="loadingImages">

@@ -31,17 +31,15 @@ class UsersController extends Controller {
 
 	public function single(User $user)
 	{
-		return view('users/user', array(
+		return view('users/single', array(
 			'user' => $user
 		));
 	}
 
 	public function current() {
 		$user = Auth::user();
-		$products = $this->userRepository->getProducts($user->id);
 		return view('users/current', array(
-			'user' => $user,
-			'products' => $products
+			'user' => $user
 		));
 	}
 

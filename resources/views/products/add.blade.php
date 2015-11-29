@@ -37,7 +37,7 @@
                 </div>
                 <div class="slide file">
                     <span class="btn-file">
-                        <span>nahrajte vlastní <i class="fa fa-photo"></i></span>
+                        <span>nahrajte vlastní</span>
                         <input type="file" file-field />
                     </span>
                 </div>
@@ -49,15 +49,12 @@
             <div class="crop-options mrg-t-s" ng-class="product.selectedImage.type">
                 <button class="crop-type" ng-click="product.selectedImage.type = 'landscape'">
                     <span>na šířku</span>
-                    <img src="{! URL::asset('images/crop-style-landscape.png') !}" alt="landscape" />
                 </button>
                 <button class="crop-type portrait" ng-click="product.selectedImage.type = 'portrait'">
                     <span>na výšku</span>
-                    <img src="{! URL::asset('images/crop-style-portrait.png') !}" alt="portrait" />
                 </button>
                 <button class="crop-type square" ng-click="product.selectedImage.type = 'square'">
                     <span>čtverec</span>
-                    <img src="{! URL::asset('images/crop-style-square.png') !}" alt="square" />
                 </button>
             </div>
             <div class="crop-area" ng-class="image.class">

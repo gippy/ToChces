@@ -17,7 +17,7 @@ class Product extends Model {
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['url', 'name', 'vendor', 'price', 'image', 'added_by', 'approved', 'layout'];
+	protected $fillable = ['url', 'name', 'vendor', 'description', 'price', 'image', 'added_by', 'approved', 'layout'];
 
 	/**
 	 * The accessors to append to the model's array form.
@@ -39,6 +39,10 @@ class Product extends Model {
 			$this->like = $this->likes()->where('user_id', Auth::user()->id)->first();
 		}
 		return $this->like;
+	}
+
+	public function creator() {
+		return $this->belongsTo('ToChces\Models\User', 'added_by');
 	}
 
 	public function getLikedAttribute(){
