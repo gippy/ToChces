@@ -908,7 +908,7 @@ button.red {
   padding-right: 20px;
 }
 .product-item {
-  display: block;
+  display: inline-block;
   margin: 9px;
   width: 286px;
   height: 286px;
