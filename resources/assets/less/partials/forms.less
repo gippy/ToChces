@@ -146,6 +146,38 @@ label {
 	background-color: @accent_color;
 	color: white;
   }
+  &.large-label {
+    padding: 0;
+    input {
+      width: 60%;
+    }
+    label {
+      width: 40%;
+      font-size: 16px;
+      padding: 0.25em 1em;
+    }
+  }
+}
+
+label.file-button {
+  input{
+    display: none;
+  }
+  margin-left: 1em;
+  width: auto!important;
+  background-color: transparent;
+  border: 2px solid @accent_color;
+  color: @accent_color;
+  cursor: pointer;
+  padding: 0.25em 1em;
+  font-size: 16px;
+  &:hover {
+    background-color: white;
+    border-color: @accent_color_hover;
+  }
+  &:hover {
+    border-color: @accent_color_active;
+  }
 }
 
 input.ng-invalid {

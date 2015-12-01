@@ -14,8 +14,8 @@
             <p class="h3">
                 <a href="{! URL::route('addProduct') !}">Přidat věc</a>
                 <span class="accent">&nbsp;|&nbsp;</span>
-                <!--<a href="{! URL::route('settings') !}">Nastavení</a>
-                <span class="accent">&nbsp;|&nbsp;</span>-->
+                <a href="{! URL::route('settings') !}">Nastavení</a>
+                <span class="accent">&nbsp;|&nbsp;</span>
                 <a href="{! URL::route('logout') !}">Odhlásit se</a>
             </p>
         </div>

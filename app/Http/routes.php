@@ -54,6 +54,8 @@ Route::get('/settings', [
 	'as' => 'settings', 'uses' => 'UsersController@settings'
 ]);
 
+Route::post('/settings', 'UsersController@settingsSubmit');
+
 Route::get('/products', 'ProductsController@all');
 Route::get('/product/{product}', 'ProductsController@single');
 Route::get('/products/getInfo', 'ProductsController@getInfo');
