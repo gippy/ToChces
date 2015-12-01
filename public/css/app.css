@@ -751,6 +751,37 @@ label {
   background-color: #35a8e0;
   color: white;
 }
+.inline-field.large-label {
+  padding: 0;
+}
+.inline-field.large-label input {
+  width: 60%;
+}
+.inline-field.large-label label {
+  width: 40%;
+  font-size: 16px;
+  padding: 0.25em 1em;
+}
+label.file-button {
+  margin-left: 1em;
+  width: auto!important;
+  background-color: transparent;
+  border: 2px solid #35a8e0;
+  color: #35a8e0;
+  cursor: pointer;
+  padding: 0.25em 1em;
+  font-size: 16px;
+}
+label.file-button input {
+  display: none;
+}
+label.file-button:hover {
+  background-color: white;
+  border-color: #4bb2e3;
+}
+label.file-button:hover {
+  border-color: #1e8ec4;
+}
 .add-product-form label {
   font-size: 18px;
   line-height: 21px;
