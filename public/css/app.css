@@ -1366,9 +1366,9 @@ tags-input .autocomplete .suggestion-item em {
   position: relative;
   display: inline-block;
   box-sizing: border-box;
-  color: #35a8e0;
-  border: 1px solid #35a8e0;
-  background: transparent;
+  color: white;
+  border: 1px solid transparent;
+  background: #00aeef;
   font-size: 18px;
   line-height: 18px;
   padding: 10px 10px 10px 30px;
@@ -1378,27 +1378,45 @@ tags-input .autocomplete .suggestion-item em {
   white-space: normal;
   overflow: hidden;
 }
+.box.large {
+  width: 290px;
+}
 .dragging .box {
   box-shadow: 1px 1px 5px #35a8e0;
 }
 .box.active {
+  border: 1px solid #00aeef;
   background-color: white;
+  color: #00aeef;
 }
 .editable-box {
   margin: 10px;
   display: inline-block;
+  position: relative;
 }
 .editable-box img {
-  display: inline-block;
-  width: 40px;
-  height: 40px;
+  position: absolute;
+  display: block;
+  left: 1px;
+  top: 1px;
+  z-index: 10;
+  width: 15px;
+  height: 15px;
   border: none;
-  background-color: #35a8e0;
+  background-color: transparent;
   cursor: pointer;
-  vertical-align: top;
 }
-.editable-box img:hover {
-  background-color: #1e8ec4;
+.corner:before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 31px 31px 0 0;
+  border-color: white transparent transparent transparent;
 }
 .corner:after {
   content: "";

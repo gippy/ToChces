@@ -393,7 +393,16 @@ app.controller 'ProductsController', ['$scope', '$http', '$sce', ($scope, $http)
 app.controller 'BoxesController', ['$scope', '$http', ($scope, $http) ->
 	$scope.boxes = []
 
-	$http.get('/boxes').success (data) -> $scope.boxes = data
+	$http.get('/boxes').success (data) ->
+		$scope.boxes = data.map (item) ->
+			item.large = item.name.length > 12
+			if item.large and item.name.length > 28 then item.name = item.name.substr(0,24) + '...'
+			return item
+
+		$scope.boxes.sort (a, b) ->
+			if a.large and !b.large then 1
+			else if !a.large and b.large then -1
+			else 1
 
 	$scope.addBox = () ->
 		$base = $scope.$parent.$parent
@@ -413,6 +422,9 @@ app.controller 'BoxesController', ['$scope', '$http', ($scope, $http) ->
 				$scope.boxes
 		)
 		$base.showModal('boxes')
+
+	$scope.isLarge = (name) ->
+		return name.length > 12
 
 	$scope.$on "reachedBoxesLimit", (event, data) ->
 		if data.type is 'over' then $scope.scrollClass = 'scrolling'

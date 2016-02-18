@@ -6,11 +6,12 @@
 
     <div class="mrg-t-m">
         <div class="editable-box" ng-repeat="box in boxes.boxes" drag ng-model="box" top-scope="boxes">
-            <img ng-if="box.id != 1 && box.id != 2"
-                 class="edit" src="{! URL::asset('images/pencil-white.png') !}"
-                 alt="landscape"
-                 ng-click="boxes.showEdit(box)"
-            /><div class="box" ng-class="box.color + ' corner'" drop ng-model="box" top-scope="boxes">
+            <div class="box" ng-class="box.color + ' corner' + (box.large ? ' large' : '')" drop ng-model="box" top-scope="boxes">
+                <img ng-if="box.id != 1 && box.id != 2"
+                     class="edit" src="{! URL::asset('images/pencil-white.png') !}"
+                     alt="landscape"
+                     ng-click="boxes.showEdit(box)"
+                />
                 {{box.name}}
             </div>
         </div>

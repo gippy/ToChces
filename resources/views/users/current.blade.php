@@ -23,7 +23,7 @@
             <div class="boxes" ng-class="(boxes.length < 4 ? 'center ' : ' ') + scrollClass">
                 <div ng-repeat="box in boxes"
                      class="box"
-                     ng-class="box.color + ' corner ' + ($parent.$parent.activeColor == box.color ? 'active' : '')"
+                     ng-class="box.color + ' corner ' + ($parent.$parent.activeColor == box.color ? 'active' : '') + (isLarge(box.name) ? ' large' : '')"
                      ng-click="$parent.$parent.activeColor = $parent.$parent.activeColor == box.color ? null : box.color"
                      drop ng-model="box" top-scope="$parent.draggableProducts">
                     {{box.name}}

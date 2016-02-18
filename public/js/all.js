@@ -910,7 +910,22 @@ app.controller('BoxesController', [
   '$scope', '$http', function($scope, $http) {
     $scope.boxes = [];
     $http.get('/boxes').success(function(data) {
-      return $scope.boxes = data;
+      $scope.boxes = data.map(function(item) {
+        item.large = item.name.length > 12;
+        if (item.large && item.name.length > 28) {
+          item.name = item.name.substr(0, 24) + '...';
+        }
+        return item;
+      });
+      return $scope.boxes.sort(function(a, b) {
+        if (a.large && !b.large) {
+          return 1;
+        } else if (!a.large && b.large) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
     });
     $scope.addBox = function() {
       var $base;
@@ -931,6 +946,9 @@ app.controller('BoxesController', [
         return $scope.modalController.close();
       }, $scope.boxes);
       return $base.showModal('boxes');
+    };
+    $scope.isLarge = function(name) {
+      return name.length > 12;
     };
     return $scope.$on("reachedBoxesLimit", function(event, data) {
       if (data.type === 'over') {
