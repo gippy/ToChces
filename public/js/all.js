@@ -425,7 +425,7 @@ app.controller('NavigationController', [
     $scope.showHome = function() {
       var isSinglePage, path;
       path = window.location.pathname;
-      isSinglePage = path.indexOf('user') !== -1 || path.indexOf('profile') !== -1 || path.indexOf('product') !== -1;
+      isSinglePage = path.indexOf('user') !== -1 || path.indexOf('profile') !== -1 || path.indexOf('product') !== -1 || path.indexOf('add') !== -1 || path.indexOf('settings') !== -1;
       if (!isSinglePage) {
         return anchorSmoothScroll();
       } else {
@@ -680,6 +680,7 @@ app.controller('AddProductController', [
     $scope.url = '';
     $scope.product = {
       name: '',
+      description: '',
       images: '',
       tags: [],
       categories: [],
@@ -773,6 +774,7 @@ app.controller('AddProductController', [
         name: $scope.product.name,
         vendor: $scope.product.vendor,
         price: $scope.product.price,
+        description: $scope.product.description,
         url: $scope.url,
         image: $scope.product.finalSrc,
         layout: $scope.product.selectedImage.type,

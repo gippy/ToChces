@@ -32,7 +32,7 @@ app.controller 'NavigationController', ['$scope', 'anchorSmoothScroll', ($scope,
 	$scope.showProfile = () -> $scope.$parent.showModal('profile')
 	$scope.showHome = () ->
 		path = window.location.pathname;
-		isSinglePage = path.indexOf('user') != -1 or path.indexOf('profile') != -1 or path.indexOf('product') != -1
+		isSinglePage = path.indexOf('user') != -1 or path.indexOf('profile') != -1 or path.indexOf('product') != -1 or path.indexOf('add') != -1 or path.indexOf('settings') != -1
 		if !isSinglePage then anchorSmoothScroll()
 		else window.location.href = '/'
 
@@ -226,6 +226,7 @@ app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $htt
 	$scope.url = ''
 	$scope.product = {
 		name: ''
+		description: ''
 		images: ''
 		tags: []
 		categories: []
@@ -302,6 +303,7 @@ app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $htt
 			name: $scope.product.name
 			vendor: $scope.product.vendor
 			price: $scope.product.price
+			description: $scope.product.description
 			url: $scope.url
 			image: $scope.product.finalSrc
 			layout: $scope.product.selectedImage.type
