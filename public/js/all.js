@@ -807,16 +807,90 @@ app.controller('AddProductController', [
 
 app.controller('ProductsController', [
   '$scope', '$http', '$sce', function($scope, $http) {
-    var dataUrl, page;
+    var dataUrl, page, parseProducts;
     $scope.products = [];
+    $scope.boxes = [];
+    $scope.switchType = {
+      product: null,
+      style: {
+        left: 0,
+        top: 0
+      },
+      show: function(product, $event) {
+        $scope.switchType.style.left = $event.pageX + 'px';
+        $scope.switchType.style.top = $event.pageY + 'px';
+        return $scope.switchType.product = product;
+      },
+      "switch": function(box) {
+        var product;
+        if (!$scope.switchType.product) {
+          return false;
+        }
+        product = $scope.switchType.product;
+        return $http.get('/product/' + product.id + '/toBox?box=' + box.id).success(function(product) {
+          var i, key, len, oldProduct, pos, ref;
+          pos = -1;
+          ref = $scope.products;
+          for (key = i = 0, len = ref.length; i < len; key = ++i) {
+            oldProduct = ref[key];
+            if (oldProduct.id === product.id) {
+              pos = key;
+            }
+          }
+          if (key !== -1) {
+            $scope.products[pos] = product;
+          } else {
+            $scope.products.push(product);
+          }
+          return $scope.switchType.product = null;
+        });
+      }
+    };
     page = 0;
     dataUrl = '/products';
+    parseProducts = function(products) {
+      var i, j, k, landscapeProducts, len, len1, len2, parsedProducts, portraitProducts, product, squareProducts;
+      parsedProducts = [];
+      squareProducts = products.filter(function(item) {
+        return item.layout === 'square';
+      });
+      landscapeProducts = products.filter(function(item) {
+        return item.layout === 'landscape';
+      });
+      portraitProducts = products.filter(function(item) {
+        return item.layout === 'portrait';
+      });
+      for (i = 0, len = landscapeProducts.length; i < len; i++) {
+        product = landscapeProducts[i];
+        parsedProducts.push(product);
+        if (portraitProducts.length > 1) {
+          parsedProducts.push(portraitProducts.pop());
+          parsedProducts.push(portraitProducts.pop());
+        } else if (squareProducts.length > 1) {
+          parsedProducts.push(squareProducts.pop());
+          parsedProducts.push(squareProducts.pop());
+        }
+      }
+      for (j = 0, len1 = portraitProducts.length; j < len1; j++) {
+        product = portraitProducts[j];
+        parsedProducts.push(product);
+        if (squareProducts.length > 2) {
+          parsedProducts.push(squareProducts.pop());
+          parsedProducts.push(squareProducts.pop());
+        }
+      }
+      for (k = 0, len2 = squareProducts.length; k < len2; k++) {
+        product = squareProducts[k];
+        parsedProducts.push(product);
+      }
+      return parsedProducts;
+    };
     $scope.getNextPage = function() {
       var query;
       $scope.loadingImages = true;
       query = window.location.search.substring(1);
       return $http.get(dataUrl + (page ? '?page=' + page : '?') + query).success(function(data) {
-        $scope.products = $scope.products.concat(data.products);
+        $scope.products = $scope.products.concat(parseProducts(data.products));
         $scope.loadingImages = false;
         return page++;
       });
@@ -828,7 +902,25 @@ app.controller('ProductsController', [
       if (isUser) {
         dataUrl = path + '/products';
       }
-      return $scope.getNextPage();
+      $scope.getNextPage();
+      return $http.get('/boxes').success(function(data) {
+        $scope.boxes = data.map(function(item) {
+          item.large = item.name.length > 12;
+          if (item.large && item.name.length > 28) {
+            item.name = item.name.substr(0, 24) + '...';
+          }
+          return item;
+        });
+        return $scope.boxes.sort(function(a, b) {
+          if (a.large && !b.large) {
+            return 1;
+          } else if (!a.large && b.large) {
+            return -1;
+          } else {
+            return 1;
+          }
+        });
+      });
     };
     $scope.getClasses = function(product) {
       var classes;

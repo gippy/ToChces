@@ -323,15 +323,61 @@ app.controller 'AddProductController', ['$scope', '$http', '$sce', ($scope, $htt
 
 app.controller 'ProductsController', ['$scope', '$http', '$sce', ($scope, $http) ->
 	$scope.products = []
+	$scope.boxes = []
+
+	$scope.switchType = {
+		product: null,
+		style: {
+			left: 0,
+			top: 0
+		}
+		show: (product, $event) ->
+			$scope.switchType.style.left = $event.pageX + 'px'
+			$scope.switchType.style.top = $event.pageY + 'px'
+			$scope.switchType.product = product
+		switch: (box) ->
+			if !$scope.switchType.product then return false
+			product = $scope.switchType.product
+			$http.get('/product/'+product.id+'/toBox?box='+box.id).success (product) ->
+				pos = -1
+				pos = key for oldProduct, key in $scope.products when oldProduct.id is product.id
+				if key != -1 then	$scope.products[pos] = product
+				else $scope.products.push product
+				$scope.switchType.product = null
+	}
 
 	page = 0
 	dataUrl = '/products'
+
+	parseProducts = (products) ->
+		parsedProducts = []
+		squareProducts = products.filter (item) -> return item.layout is 'square'
+		landscapeProducts = products.filter (item) -> return item.layout is 'landscape'
+		portraitProducts = products.filter (item) -> return item.layout is 'portrait'
+		for product in landscapeProducts
+			parsedProducts.push product
+			if (portraitProducts.length > 1)
+				parsedProducts.push portraitProducts.pop()
+				parsedProducts.push portraitProducts.pop()
+			else if (squareProducts.length > 1)
+				parsedProducts.push squareProducts.pop()
+				parsedProducts.push squareProducts.pop()
+
+		for product in portraitProducts
+			parsedProducts.push product
+			if (squareProducts.length > 2)
+				parsedProducts.push squareProducts.pop()
+				parsedProducts.push squareProducts.pop()
+
+		parsedProducts.push product for product in squareProducts
+
+		return parsedProducts
 
 	$scope.getNextPage = () ->
 		$scope.loadingImages = true
 		query = window.location.search.substring(1)
 		$http.get(dataUrl + (if page then '?page='+page else '?' ) + query).success (data) ->
-			$scope.products = $scope.products.concat(data.products)
+			$scope.products = $scope.products.concat(parseProducts(data.products))
 			$scope.loadingImages = false
 			page++
 
@@ -340,6 +386,17 @@ app.controller 'ProductsController', ['$scope', '$http', '$sce', ($scope, $http)
 		isUser = path.indexOf('user') != -1 or path.indexOf('profile') != -1
 		if isUser then dataUrl = path + '/products'
 		$scope.getNextPage()
+
+		$http.get('/boxes').success (data) ->
+			$scope.boxes = data.map (item) ->
+				item.large = item.name.length > 12
+				if item.large and item.name.length > 28 then item.name = item.name.substr(0,24) + '...'
+				return item
+
+			$scope.boxes.sort (a, b) ->
+				if a.large and !b.large then 1
+				else if !a.large and b.large then -1
+				else 1
 
 	$scope.getClasses = (product) ->
 		classes = []
